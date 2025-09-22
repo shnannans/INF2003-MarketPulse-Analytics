@@ -1,0 +1,94 @@
+2025-09-23 04:44:03,268 - INFO - package: mysql.connector.plugins
+2025-09-23 04:44:03,268 - INFO - plugin_name: mysql_native_password
+2025-09-23 04:44:03,270 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-23 04:44:03,272 - INFO - MySQL database 'financial_db' created/verified
+2025-09-23 04:44:03,274 - INFO - Connected to MySQL database: financial_db
+2025-09-23 04:44:03,317 - INFO - Connected to MongoDB database: financial_db
+2025-09-23 04:44:03,322 - INFO - Enhanced MySQL tables created successfully
+2025-09-23 04:44:03,325 - INFO - Collecting index data for S&P 500
+2025-09-23 04:44:07,766 - INFO - Collecting index data for Dow Jones
+2025-09-23 04:44:08,869 - INFO - Collecting index data for NASDAQ
+2025-09-23 04:44:09,986 - INFO - Market indices collection completed
+2025-09-23 04:44:09,992 - INFO - Collecting enhanced data for AAPL
+2025-09-23 04:44:11,281 - INFO - Collecting enhanced data for MSFT
+2025-09-23 04:44:12,556 - INFO - Collecting enhanced data for GOOGL
+2025-09-23 04:44:13,830 - INFO - Collecting enhanced data for AMZN
+2025-09-23 04:44:15,118 - INFO - Collecting enhanced data for TSLA
+2025-09-23 04:44:16,366 - INFO - Collecting enhanced data for META
+2025-09-23 04:44:17,620 - INFO - Collecting enhanced data for NVDA
+2025-09-23 04:44:18,853 - INFO - Collecting enhanced data for JPM
+2025-09-23 04:44:20,171 - INFO - Collecting enhanced data for V
+2025-09-23 04:44:21,440 - INFO - Collecting enhanced data for JNJ
+2025-09-23 04:44:22,810 - INFO - Collecting enhanced data for WMT
+2025-09-23 04:44:24,207 - INFO - Collecting enhanced data for PG
+2025-09-23 04:44:25,534 - INFO - Collecting enhanced data for UNH
+2025-09-23 04:44:26,811 - INFO - Collecting enhanced data for HD
+2025-09-23 04:44:28,198 - INFO - Collecting enhanced data for MA
+2025-09-23 04:44:29,492 - INFO - Collecting enhanced data for DIS
+2025-09-23 04:44:30,845 - INFO - Collecting enhanced data for PYPL
+2025-09-23 04:44:32,112 - INFO - Collecting enhanced data for BAC
+2025-09-23 04:44:33,434 - INFO - Collecting enhanced data for ADBE
+2025-09-23 04:44:34,732 - INFO - Collecting enhanced data for CRM
+2025-09-23 04:44:35,958 - INFO - Collecting enhanced data for NFLX
+2025-09-23 04:44:37,193 - INFO - Collecting enhanced data for NKE
+2025-09-23 04:44:38,443 - INFO - Collecting enhanced data for TMO
+2025-09-23 04:44:39,765 - INFO - Collecting enhanced data for ABT
+2025-09-23 04:44:41,113 - INFO - Collecting enhanced data for COST
+2025-09-23 04:44:42,401 - INFO - Collecting enhanced data for PFE
+2025-09-23 04:44:43,747 - INFO - Collecting enhanced data for AVGO
+2025-09-23 04:44:44,970 - INFO - Collecting enhanced data for XOM
+2025-09-23 04:44:46,298 - INFO - Collecting enhanced data for CVX
+2025-09-23 04:44:47,615 - INFO - Collecting enhanced data for KO
+2025-09-23 04:44:48,954 - INFO - Collecting enhanced data for PEP
+2025-09-23 04:44:50,278 - INFO - Collecting enhanced data for INTC
+2025-09-23 04:44:51,543 - INFO - Collecting enhanced data for CSCO
+2025-09-23 04:44:52,866 - INFO - Collecting enhanced data for VZ
+2025-09-23 04:44:54,129 - INFO - Collecting enhanced data for MRK
+2025-09-23 04:44:55,493 - INFO - Collecting enhanced data for T
+2025-09-23 04:44:56,802 - INFO - Collecting enhanced data for DHR
+2025-09-23 04:44:58,098 - INFO - Collecting enhanced data for TXN
+2025-09-23 04:44:59,434 - INFO - Collecting enhanced data for LLY
+2025-09-23 04:45:00,813 - INFO - Collecting enhanced data for ACN
+2025-09-23 04:45:02,132 - INFO - Collecting enhanced data for HON
+2025-09-23 04:45:03,466 - INFO - Collecting enhanced data for MDT
+2025-09-23 04:45:04,813 - INFO - Collecting enhanced data for UPS
+2025-09-23 04:45:06,062 - INFO - Collecting enhanced data for QCOM
+2025-09-23 04:45:07,324 - INFO - Collecting enhanced data for IBM
+2025-09-23 04:45:08,638 - INFO - Collecting enhanced data for BMY
+2025-09-23 04:45:10,005 - INFO - Collecting enhanced data for NEE
+2025-09-23 04:45:11,345 - INFO - Collecting enhanced data for SBUX
+2025-09-23 04:45:12,611 - INFO - Collecting enhanced data for AMT
+2025-09-23 04:45:13,875 - INFO - Collecting enhanced data for LOW
+2025-09-23 04:45:15,191 - INFO - Enhanced stock data collection completed
+2025-09-23 04:45:15,194 - INFO - Collecting sector data for Technology
+2025-09-23 04:45:16,324 - INFO - Collecting sector data for Financials
+2025-09-23 04:45:17,441 - INFO - Collecting sector data for Energy
+2025-09-23 04:45:18,566 - INFO - Collecting sector data for Healthcare
+2025-09-23 04:45:19,675 - INFO - Collecting sector data for Industrials
+2025-09-23 04:45:20,816 - INFO - Collecting sector data for Consumer Staples
+2025-09-23 04:45:21,932 - INFO - Collecting sector data for Consumer Discretionary
+2025-09-23 04:45:23,063 - INFO - Collecting sector data for Utilities
+2025-09-23 04:45:24,168 - INFO - Collecting sector data for Materials
+2025-09-23 04:45:25,298 - INFO - Collecting sector data for Real Estate
+2025-09-23 04:45:26,405 - INFO - Collecting sector data for Communication Services
+2025-09-23 04:45:27,523 - INFO - Sector performance collection completed
+2025-09-23 04:45:27,535 - INFO - Generating comprehensive news dataset...
+2025-09-23 04:45:29,847 - INFO - Inserted 1000 comprehensive news articles
+2025-09-23 04:45:29,855 - INFO - Sample portfolio data generated
+2025-09-23 04:45:29,859 - INFO - Table companies: 50 records (Company dropdown and info)
+2025-09-23 04:45:29,861 - INFO - Table stock_prices: 12500 records (Price charts with technical indicators)
+2025-09-23 04:45:29,862 - INFO - Table financial_metrics: 50 records (KPI cards and company details (REQUIRED by get_companies.php))
+2025-09-23 04:45:29,863 - INFO - Table market_indices: 360 records (Market indices charts)
+2025-09-23 04:45:29,865 - INFO - Table sector_performance: 1320 records (Sector heatmaps)
+2025-09-23 04:45:29,865 - INFO - Table portfolio_holdings: 10 records (Portfolio widgets)
+2025-09-23 04:45:29,869 - INFO - SUCCESS: get_companies.php query test passed
+2025-09-23 04:45:29,870 - INFO -    NVDA: PE=NMS, Beta=https://www.nvidia.com, Records=2025-09-23 04:44:17
+2025-09-23 04:45:29,870 - INFO -    MSFT: PE=NMS, Beta=https://www.microsoft.com, Records=2025-09-23 04:44:11
+2025-09-23 04:45:29,870 - INFO -    AAPL: PE=NMS, Beta=https://www.apple.com, Records=2025-09-23 04:44:10
+2025-09-23 04:45:29,877 - INFO - MongoDB news articles: 3050 (for news feed)
+2025-09-23 04:45:29,879 - INFO - 
+2025-09-23 04:45:29,891 - INFO - 
+2025-09-23 04:45:29,891 - INFO - Next steps:
+2025-09-23 04:45:29,891 - INFO - 1. Start your web server (XAMPP/WAMP/MAMP)
+2025-09-23 04:45:29,891 - INFO - 2. Open http://localhost/your-project-folder/index.php
+2025-09-23 04:45:29,891 - INFO - 3. Enjoy your data-driven dashboard!

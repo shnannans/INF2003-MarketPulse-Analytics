@@ -1,0 +1,33 @@
+# Install required packages before running:
+# 1. Open terminal in VS Code (Ctrl + `)
+# 2. Run: pip install -r requirements.txt
+# 3. Verify: pip list
+
+# Finance data retrieval
+import yfinance as yf
+# Data manipulation and analysis
+import pandas as pd
+# HTTP requests to external APIs
+import requests
+# Date and time handling
+from datetime import datetime, timedelta
+import time
+# JSON handling
+import json
+# Logging for debugging and monitoring
+import logging
+# Operating system interactions
+import os
+# MySQL database connection
+import mysql.connector
+from mysql.connector import errorcode
+# MongoDB connection
+from pymongo import MongoClient
+# Task scheduling
+import schedule
+# Suppress warnings if needed
+import warnings
+# Simplify common natural processing tasks
+textblob
+# After installing textblob, run:
+# python -m textblob.download_corpora

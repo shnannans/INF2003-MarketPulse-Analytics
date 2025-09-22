@@ -1,0 +1,383 @@
+===============================================================================
+                     FINSIGHT ANALYTICS - FINANCIAL DASHBOARD
+                       Complete Setup & User Guide
+===============================================================================
+
+PROJECT OVERVIEW
+================
+FinSight Analytics is a hybrid database application that provides real-time 
+financial news sentiment analysis and stock performance tracking. The system 
+combines:
+
+- MySQL (Relational Database): Stock prices, company data, financial metrics
+- MongoDB (NoSQL Database): News articles with sentiment analysis
+- PHP Frontend: Interactive dashboard with charts and filters
+- Python Backend: Automated data collection and processing
+
+KEY FEATURES
+============
+✓ Real-time stock price tracking and technical analysis
+✓ Automated news sentiment analysis using AI
+✓ Interactive charts and data visualizations
+✓ Cross-database correlation analysis
+✓ Automated data collection every 30 minutes
+✓ Support for 10+ major stocks (AAPL, MSFT, GOOGL, etc.)
+
+SYSTEM REQUIREMENTS
+==================
+- Docker & Docker Compose (required)
+- 4GB+ RAM available for containers
+- 2GB+ disk space for databases
+- Internet connection for data collection
+
+QUICK START GUIDE
+================
+
+STEP 1: Download the Project
+---------------------------
+Option A - Git Clone:
+  git clone https://github.com/shnannans/INF2003-MarketPulse-Analytics
+  cd finsight-analytics
+
+Option B - Download ZIP:
+  1. Download ZIP file from GitHub
+  2. Extract to desired folder
+  3. Open terminal/command prompt in project folder
+
+STEP 2: Verify Project Structure
+-------------------------------
+Your folder should contain:
+  marketpluse plaform/
+  ├── docker-compose.yml          # Container orchestration
+  ├── init.sql                   # Database setup script
+  ├── frontend_development/      # Web interface files
+  │   ├── index.php             # Main dashboard page
+  │   ├── api/                  # Backend API endpoints
+  │   ├── js/main.js           # Frontend JavaScript
+  │   └── css/main.css         # Styling
+  ├── backend/                  # Python data collection
+  │   ├── data_collection.py   # Main collection script
+  │   ├── scheduler.py         # Automation scheduler
+  │   ├── requirements.txt     # Python dependencies
+  │   └── Dockerfile          # Python container config
+  └── logs/                    # Application logs
+
+STEP 3: Install Docker
+---------------------
+Windows/Mac:
+  1. Download Docker Desktop from https://docker.com
+  2. Install and restart your computer
+  3. Start Docker Desktop
+
+Linux (Ubuntu/Debian):
+  sudo apt update
+  sudo apt install docker.io docker-compose
+  sudo systemctl start docker
+  sudo systemctl enable docker
+
+STEP 4: Build and Start Services
+-------------------------------
+In the project root folder:
+
+  # Build all containers (first time only)
+  docker-compose up --build -d
+
+  # Check if all services are running
+  docker-compose ps
+
+You should see 6 services running:
+- php-apache (port 8080)
+- mysql-db (port 3306) 
+- mongo-db (port 27017)
+- phpmyadmin (port 8081)
+- mongo-express (port 8082)
+- data-collector (background)
+
+STEP 5: Access the Application
+-----------------------------
+🌐 Main Dashboard: http://localhost:8080
+📊 Database Admin (MySQL): http://localhost:8081 (root/root)
+🍃 Database Admin (MongoDB): http://localhost:8082 (admin/admin)
+
+STEP 6: Wait for Initial Data Collection
+---------------------------------------
+The system needs 5-10 minutes to collect initial data:
+
+  # Check data collection progress
+  docker-compose logs -f data-collector
+
+  # Verify data is being collected
+  # MySQL: Go to http://localhost:8081 → financial_db → stock_prices
+  # MongoDB: Go to http://localhost:8082 → financial_db → financial_news
+
+USING THE DASHBOARD
+==================
+
+TOP NAVIGATION
+-------------
+- Date Range: Filter data by Day/Week/Month
+- Search Box: Enter ticker symbol (e.g., AAPL, MSFT)
+- Apply Button: Refresh data with new filters
+
+SIDEBAR FILTERS
+--------------
+- Tickers: Filter by specific stocks or sectors
+- News Sources: Filter by Reuters, Bloomberg, etc.
+- Sentiment: Show only Positive/Negative/Neutral news
+- Keywords: Search for specific terms (AI, earnings, etc.)
+
+MAIN DASHBOARD SECTIONS
+----------------------
+A. Overview Cards
+   - Total Companies: Number of stocks tracked
+   - Articles: Recent news count
+   - Avg Sentiment: Overall market sentiment (-1 to +1)
+   - Portfolio Value: Mock portfolio tracking
+
+B. Stock Performance
+   - Interactive price charts with moving averages
+   - Volume indicators
+   - Technical analysis metrics
+   - Hover for detailed information
+
+C. Market Indices
+   - S&P 500, NASDAQ tracking
+   - Daily percentage changes
+   - Comparative performance
+
+D. News & Sentiment
+   - Real-time news feed with sentiment scores
+   - Sentiment trend charts
+   - Word clouds of trending topics
+   - Click articles for full details
+
+E. Combined Analytics
+   - Stock price vs sentiment correlation
+   - Automated alerts for unusual activity
+   - Cross-database insights
+
+COMMON OPERATIONS
+================
+
+View Specific Stock:
+1. Enter ticker (e.g., "AAPL") in search box
+2. Click Apply
+3. All charts update to show Apple data
+
+Filter by Sentiment:
+1. Select "Positive" from sentiment dropdown
+2. Click Apply Filters
+3. Only positive news articles displayed
+
+Export Data:
+1. Click "Export CSV" in sidebar
+2. Current filtered view exported
+3. File downloads automatically
+
+Check System Health:
+1. Monitor data collection: docker-compose logs data-collector
+2. Check database status via admin interfaces
+3. Verify recent data timestamps
+
+TROUBLESHOOTING
+==============
+
+Dashboard Won't Load
+------------------
+Problem: http://localhost:8080 shows error
+Solution: 
+  1. Check Docker is running: docker-compose ps
+  2. Restart services: docker-compose restart
+  3. Check logs: docker-compose logs php-apache
+
+No Stock Data
+------------
+Problem: Charts show "No data available"
+Solution:
+  1. Wait 5-10 minutes for initial collection
+  2. Check data collector: docker-compose logs data-collector
+  3. Manually run collection: docker-compose exec data-collector python data_collection.py
+
+No News Articles
+---------------
+Problem: News feed is empty
+Solution:
+  1. Check MongoDB connection: http://localhost:8082
+  2. Verify news collection in logs
+  3. Check date range filters (try "Month" instead of "Day")
+
+Database Connection Errors
+-------------------------
+Problem: API returns database connection errors
+Solution:
+  1. Ensure all containers running: docker-compose ps
+  2. Check database passwords match in docker-compose.yml
+  3. Restart databases: docker-compose restart mysql mongo
+
+Port Already in Use
+------------------
+Problem: Docker can't start due to port conflicts
+Solution:
+  1. Stop other services using ports 8080, 3306, 27017
+  2. Or edit docker-compose.yml to use different ports
+  3. Restart: docker-compose down && docker-compose up -d
+
+Slow Performance
+---------------
+Problem: Dashboard loads slowly
+Solution:
+  1. Allocate more RAM to Docker (4GB+ recommended)
+  2. Close other applications
+  3. Reduce date range filters
+
+MAINTENANCE
+===========
+
+Regular Operations:
+- Data updates automatically every 30 minutes
+- No manual intervention required
+- Logs rotate automatically
+
+Weekly Maintenance:
+  # Clean up old logs
+  docker-compose exec data-collector find /app/logs -name "*.log" -mtime +7 -delete
+  
+  # Restart services for optimal performance
+  docker-compose restart
+
+Monthly Maintenance:
+  # Update containers (backup data first!)
+  docker-compose pull
+  docker-compose down
+  docker-compose up -d
+
+Backup Important Data:
+  # Export MySQL data
+  docker-compose exec mysql mysqldump -u root -proot financial_db > backup.sql
+  
+  # Export MongoDB data  
+  docker-compose exec mongo mongodump --db financial_db --out /data/backup
+
+ADVANCED CONFIGURATION
+=====================
+
+API Keys (For Real News Data):
+1. Get Alpha Vantage key: https://www.alphavantage.co/support/#api-key
+2. Get Finnhub key: https://finnhub.io/
+3. Edit backend/data_collection.py:
+   ALPHA_VANTAGE_KEY = "your_key_here"
+   FINNHUB_KEY = "your_key_here"
+4. Restart: docker-compose restart data-collector
+
+Custom Stock List:
+1. Edit backend/data_collection.py
+2. Modify 'tickers' list with desired symbols
+3. Restart data collector
+
+Collection Frequency:
+1. Edit backend/scheduler.py
+2. Modify schedule.every() intervals
+3. Restart data collector
+
+SYSTEM ARCHITECTURE
+==================
+
+Data Flow:
+1. Python scripts collect stock/news data from APIs
+2. Stock data → MySQL (structured, normalized)
+3. News data → MongoDB (flexible, document-based)
+4. PHP APIs query both databases
+5. Frontend JavaScript displays unified dashboard
+
+Technologies Used:
+- Backend Data: Python + yfinance + requests
+- Relational DB: MySQL 8.0 (stock prices, companies)
+- NoSQL DB: MongoDB 6.0 (news articles, sentiment)
+- Web Server: Apache + PHP 8.2
+- Frontend: HTML5 + Bootstrap 5 + Chart.js
+- Orchestration: Docker Compose
+
+Database Schema:
+MySQL Tables:
+- companies: ticker, name, sector, industry
+- stock_prices: ticker, date, OHLC, volume  
+- financial_metrics: ticker, PE ratio, dividend yield
+
+MongoDB Collections:
+- financial_news: articles with embedded sentiment analysis
+
+SUPPORT & DEVELOPMENT
+====================
+
+Common Issues:
+- Check logs: docker-compose logs [service-name]
+- Restart services: docker-compose restart
+- Full reset: docker-compose down && docker-compose up --build -d
+
+Development Mode:
+  # Edit files while running (changes auto-reload)
+  # Frontend: Edit files in frontend_development/
+  # Backend: Edit files in backend/ then restart data-collector
+
+Performance Monitoring:
+  # Resource usage
+  docker stats
+  
+  # Service health
+  docker-compose ps
+  
+  # Detailed logs
+  docker-compose logs -f --tail=100
+
+Getting Help:
+- Check logs for error messages
+- Verify all services running with: docker-compose ps
+- Review this guide's troubleshooting section
+- Check Docker Desktop for container status
+
+PROJECT STRUCTURE DETAILS
+=========================
+
+frontend_development/
+├── index.php                    # Main dashboard page
+├── api/                        # Backend API endpoints
+│   ├── get_companies.php       # Company data from MySQL
+│   ├── get_stock_analysis.php  # Stock prices & technical analysis
+│   ├── get_news.php           # News articles from MongoDB
+│   ├── get_sentiment.php      # Sentiment analysis aggregation
+│   ├── get_dashboard_summary.php # Overview statistics
+│   ├── get_indices.php        # Market indices data
+│   └── get_correlation.php    # Cross-database correlation
+├── js/
+│   └── main.js                # Frontend JavaScript logic
+├── css/
+│   └── main.css              # Dashboard styling
+└── inc/
+    └── head.inc.php          # Common HTML headers
+
+backend/
+├── data_collection.py        # Main data collection script
+├── scheduler.py              # Automated scheduling system
+├── requirements.txt          # Python dependencies
+└── Dockerfile               # Python container configuration
+
+Configuration Files:
+├── docker-compose.yml        # Multi-container orchestration
+├── init.sql                 # MySQL database initialization
+└── project_structure.txt    # This user guide
+
+SUCCESS INDICATORS
+==================
+✓ All 6 Docker containers running (docker-compose ps)
+✓ Dashboard loads at http://localhost:8080
+✓ Stock charts display price data
+✓ News feed shows recent articles with sentiment scores
+✓ Data collection logs show successful API calls
+✓ Database admin interfaces accessible and contain data
+
+The system is working correctly when you see real stock price charts and 
+news articles with sentiment analysis on the main dashboard.
+
+===============================================================================
+                              END OF GUIDE
+===============================================================================
