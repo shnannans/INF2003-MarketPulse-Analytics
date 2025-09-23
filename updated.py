@@ -375,50 +375,24 @@ class FinancialNewsAnalyzer:
                        'url', 'source', 'authors', 'category']
         df = df.reindex(columns=column_order)
         
-        # Save to Excel with multiple sheets
+        # Save to Excel with single sheet
         with pd.ExcelWriter(filename, engine='openpyxl') as writer:
-            # Main sheet with all data
-            df.to_excel(writer, sheet_name='All_News', index=False)
+            # Single sheet with all data
+            df.to_excel(writer, sheet_name='Financial_News', index=False)
             
-            # Separate sheets by ticker
-            tickers = df['ticker'].unique()
-            for ticker in tickers[:10]:  # Limit to prevent too many sheets
-                ticker_df = df[df['ticker'] == ticker]
-                if len(ticker_df) > 0:
-                    sheet_name = ticker.replace('/', '_')[:31]  # Excel sheet name limit
-                    ticker_df.to_excel(writer, sheet_name=sheet_name, index=False)
-            
-            # Summary sheet
-            summary_data = {
-                'Metric': ['Total Articles', 'Positive Sentiment', 'Negative Sentiment', 'Neutral Sentiment',
-                          'Unique Tickers', 'Date Range From', 'Date Range To', 'Last Updated'],
-                'Value': [
-                    len(df),
-                    len(df[df['sentiment'] == 'positive']),
-                    len(df[df['sentiment'] == 'negative']),
-                    len(df[df['sentiment'] == 'neutral']),
-                    len(df['ticker'].unique()),
-                    df['date'].min(),
-                    df['date'].max(),
-                    datetime.now()
-                ]
-            }
-            pd.DataFrame(summary_data).to_excel(writer, sheet_name='Summary', index=False)
-            
-            # Format all worksheets
-            for sheet_name in writer.sheets:
-                worksheet = writer.sheets[sheet_name]
-                for column in worksheet.columns:
-                    max_length = 0
-                    column_letter = column[0].column_letter
-                    for cell in column:
-                        try:
-                            if len(str(cell.value)) > max_length:
-                                max_length = len(str(cell.value))
-                        except:
-                            pass
-                    adjusted_width = min(max_length + 2, 80)
-                    worksheet.column_dimensions[column_letter].width = adjusted_width
+            # Format the worksheet
+            worksheet = writer.sheets['Financial_News']
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = min(max_length + 2, 80)
+                worksheet.column_dimensions[column_letter].width = adjusted_width
         
         logger.info(f"Data saved to {filename}")
         return df
@@ -428,8 +402,19 @@ def main():
     ALPHA_VANTAGE_KEY = "D8UW6Y3OJAB4FZIH"  # Replace with your key
     FINNHUB_KEY = "d34fdbpr01qqt8sos93gd34fdbpr01qqt8sos940"  # Replace with your key
     
-    # Comprehensive list of stocks to track
-    STOCKS_TO_TRACK = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'NVDA', 'META', 'NFLX', 'JPM', 'V']
+    # Stocks to track (from your list)
+    STOCKS_TO_TRACK = [
+        'NVDA',    # Nvidia
+        'MSFT',    # Microsoft
+        'AAPL',    # Apple Inc.
+        'AMZN',    # Amazon
+        'META',    # Meta Platforms
+        'AVGO',    # Broadcom
+        'GOOGL',   # Alphabet Inc. (Class A)
+        'GOOG',    # Alphabet Inc. (Class C)
+        'TSLA',    # Tesla, Inc.
+        'BRK.B'    # Berkshire Hathaway
+    ]
     
     # Initialize analyzer
     analyzer = FinancialNewsAnalyzer(ALPHA_VANTAGE_KEY, FINNHUB_KEY)
@@ -520,10 +505,7 @@ def main():
         for _, row in top_negative.iterrows():
             print(f"   {row['ticker']}: {row['title'][:60]}... (Score: {row['sentiment_score']})")
         
-        print("\n💾 Data saved to Excel with multiple sheets:")
-        print("   • All_News: Complete dataset")
-        print("   • Individual ticker sheets")
-        print("   • Summary: Analysis overview")
+        print("\n💾 Data saved to single Excel sheet: Financial_News")
         
         if not is_first_run:
             print(f"\n⏰ Next run recommended: {(current_time + timedelta(days=7)).strftime('%Y-%m-%d')}")
