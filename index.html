@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketPulse Analytics Platform: See into the heart of the market.</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+      body { font-family: 'Open Sans', sans-serif; background-color: #f8f9fa; }
+      h1, h3 { font-family: 'Abril Fatface', cursive; }
+      .card { border-radius: 12px; }
+      .sidebar { min-width: 260px; max-width: 320px; }
+      .content-area { flex: 1 1 auto; }
+      .topbar { height: 64px; display:flex; align-items:center; gap:16px; }
+      .filter-section { max-height: 60vh; overflow:auto; }
+      .clickable { cursor:pointer; }
+      .sent-pos { color: #198754; } /* bootstrap success green */
+      .sent-neg { color: #dc3545; }  /* bootstrap danger red */
+      .sent-ntrl { color: #6c757d; } /* neutral gray */
+
+      /* Enhanced article display */
+      .list-group-item {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid #dee2e6;
+        margin-bottom: 0.5rem;
+        border-radius: 8px !important;
+      }
+
+      .list-group-item:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-color: #198754;
+      }
+
+      /* Sentiment badge styling */
+      .sentiment-badge {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Article content typography */
+      .article-content {
+        font-family: 'Georgia', serif;
+        line-height: 1.7;
+        color: #2c3e50;
+      }
+
+      .article-content p {
+        margin-bottom: 1.2rem;
+      }
+
+      .article-content p:first-child {
+        font-size: 1.05rem;
+        font-weight: 400;
+      }
+
+      /* Modal improvements */
+      .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      }
+
+      .modal-header {
+        border-bottom: 2px solid #e9ecef;
+        padding: 1.5rem;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      /* Sentiment indicator styling */
+      .sentiment-indicator {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid;
+        border-color: inherit;
+      }
+
+      .small-badge { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; }
+      /* Chart container styling - prevent infinite growth */
+      .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+      .chart-container.small {
+        height: 200px;
+      }
+      .chart-container canvas {
+        max-width: 100% !important;
+        max-height: 100% !important;
+      }
+      #sentimentChart, #priceChart, #indicesChart, #sentimentTrendChart, #priceSentimentOverlay {
+        max-width: 100%;
+      }
+      .api-status { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+      .api-status.online { background-color: #d1edff; color: #0c63e4; }
+      .api-status.offline { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body class="bg-light">
+  <div class="container-fluid p-3">
+    <!-- Top bar -->
+    <div class="d-flex justify-content-between align-items-center topbar mb-3">
+      <div class="d-flex align-items-center gap-3">
+        <h3 class="mb-0">MarketPulse Analytics Platform</h3>
+        <small class="text-muted">Sentiment-driven stock insights</small>
+        <span id="apiStatus" class="api-status">Checking API...</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <label class="mb-0 me-2">Date:</label>
+        <select id="dateRange" class="form-select form-select-sm">
+          <option value="1">Day</option>
+          <option value="7" selected>Week</option>
+          <option value="30">Month</option>
+        </select>
+
+        <input id="tickerSearch" class="form-control form-control-sm ms-3" style="width:160px"
+               placeholder="Ticker or Index (e.g., AAPL)">
+        <button id="applySearch" class="btn btn-sm btn-primary ms-2">Apply</button>
+      </div>
+    </div>
+
+    <div class="d-flex gap-3">
+      <!-- Sidebar -->
+      <aside class="sidebar bg-white p-3 shadow-sm rounded">
+        <h6>Filters</h6>
+        <div class="filter-section mb-3">
+          <label class="form-label small">Tickers / Sectors / Indices</label>
+          <input id="filterTickers" class="form-control form-control-sm mb-2" placeholder="AAPL, MSFT, GOOGL">
+          <select id="sectorSelect" class="form-select form-select-sm mb-2">
+            <option value="">All sectors</option>
+            <option value="Technology">Technology</option>
+            <option value="Financials">Financials</option>
+            <option value="Energy">Energy</option>
+          </select>
+
+          <label class="form-label small mt-2">News sources / Social</label>
+          <select id="sourceSelect" class="form-select form-select-sm mb-2">
+            <option value="">All</option>
+            <option value="Reuters">Reuters</option>
+            <option value="Bloomberg">Bloomberg</option>
+            <option value="Twitter">Twitter</option>
+          </select>
+
+          <label class="form-label small mt-2">Sentiment type</label>
+          <div class="mb-2">
+            <select id="sentimentType" class="form-select form-select-sm">
+              <option value="">All</option>
+              <option value="positive">Positive</option>
+              <option value="negative">Negative</option>
+              <option value="neutral">Neutral</option>
+            </select>
+          </div>
+
+          <label class="form-label small mt-2">Keywords</label>
+          <input id="keywordFilter" class="form-control form-control-sm mb-2" placeholder="e.g. AI, Oil, EV">
+
+          <button id="applyFilters" class="btn btn-sm btn-outline-primary w-100">Apply Filters</button>
+        </div>
+
+        <hr>
+
+        <h6>Quick Actions</h6>
+        <div class="d-grid gap-2">
+          <button id="btnExportCSV" class="btn btn-sm btn-outline-secondary">Export CSV</button>
+          <button id="btnRunAlerts" class="btn btn-sm btn-warning">Run Alerts</button>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="content-area">
+        <!-- KPI Cards -->
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+              <small>Total Companies</small>
+              <h4 id="totalCompanies">—</h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stock Performance Overview -->
+        <section class="card p-3 mb-3 shadow-sm">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Stock Performance Overview</h5>
+            <div>
+              <button id="btnToggleCandlestick" class="btn btn-sm btn-outline-secondary">Toggle Candlestick</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-9">
+              <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-3">
+            </div>
+          </div>
+        </section>
+
+        <!-- Market Indices Overview -->
+        <section class="card p-3 mb-3 shadow-sm">
+          <h5>Market Indices Overview</h5>
+          <div class="chart-container small">
+            <canvas id="indicesChart"></canvas>
+          </div>
+          <div class="d-flex gap-2 mt-2" id="indexCards">
+            <!-- dynamic index cards -->
+          </div>
+        </section>
+
+        <!-- News & Sentiment Insights -->
+        <section class="card p-3 mb-3 shadow-sm">
+          <div class="d-flex justify-content-between">
+            <h5>News & Sentiment Insights</h5>
+            <div class="d-flex gap-2">
+              <button id="btnWordcloud" class="btn btn-sm btn-outline-info">Generate Word Cloud</button>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-lg-8">
+              <div class="chart-container">
+                <canvas id="sentimentTrendChart"></canvas>
+              </div>
+              <div class="mt-3">
+                <h6>Topic Highlights</h6>
+                <div id="topicHighlights" class="small">
+                  <!-- topics will appear here -->
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <h6>Recent Headlines</h6>
+              <div id="newsFeed" class="list-group" style="max-height:360px; overflow:auto;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Combined Analytics -->
+        <section class="card p-3 mb-3 shadow-sm">
+          <h5>Combined Analytics</h5>
+          <div class="row">
+            <div class="col-lg-9">
+              <div class="chart-container">
+                <canvas id="priceSentimentOverlay"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <h6>Alerts</h6>
+              <div id="alertsList" style="max-height:360px; overflow:auto;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sector Heatmap & Timeline -->
+        <section class="card p-3 mb-3 shadow-sm">
+          <h5>Sector Heatmap & Timeline</h5>
+          <div class="row">
+            <div class="col-lg-6">
+              <div id="sectorHeatmap" style="height:300px;">Loading heatmap...</div>
+            </div>
+            <div class="col-lg-6">
+              <div id="trendTimeline" style="height:300px; overflow:auto;">Timeline will appear here</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Article Modal -->
+  <div class="modal fade" id="articleModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="articleModalTitle"></h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="articleModalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // API configuration - Updated for FastAPI
+    window.API_BASE = "http://localhost:8000/api/";
+
+    // Global chart variables
+    let priceChart = null;
+    let sentimentTrendChart = null;
+    let indicesChart = null;
+    let overlayChart = null;
+
+    // Setup event handlers when DOM is ready
+    document.addEventListener("DOMContentLoaded", () => {
+      setupEventHandlers();
+      checkAPIStatus();
+      loadDashboard(); // initial load
+    });
+
+    function setupEventHandlers() {
+      document.getElementById("applySearch").addEventListener("click", () => {
+        loadDashboard();
+      });
+
+      document.getElementById("applyFilters").addEventListener("click", () => {
+        loadDashboard();
+      });
+
+      document.getElementById("btnExportCSV").addEventListener("click", exportCurrentViewCSV);
+      document.getElementById("btnRunAlerts").addEventListener("click", runAlerts);
+      document.getElementById("btnWordcloud").addEventListener("click", generateWordCloud);
+      document.getElementById("btnToggleCandlestick").addEventListener("click", toggleCandlestick);
+    }
+
+    // Check API status
+    async function checkAPIStatus() {
+      try {
+        const response = await fetch(`${window.API_BASE.replace('/api/', '/health')}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+          document.getElementById("apiStatus").className = "api-status online";
+          document.getElementById("apiStatus").textContent = "API Online";
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (err) {
+        document.getElementById("apiStatus").className = "api-status offline";
+        document.getElementById("apiStatus").textContent = "API Offline";
+        console.error("API Status Check Failed:", err);
+      }
+    }
+
+    // Generic API fetch function with error handling
+    async function fetchAPI(endpoint, params = {}) {
+      try {
+        const url = new URL(endpoint, window.API_BASE);
+        Object.keys(params).forEach(key => {
+          if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+            url.searchParams.append(key, params[key]);
+          }
+        });
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.status === 'error') {
+          throw new Error(data.error || 'API returned error status');
+        }
+
+        return data;
+      } catch (error) {
+        console.error(`API call failed for ${endpoint}:`, error);
+        throw error;
+      }
+    }
+
+    async function loadDashboard() {
+      const ticker = document.getElementById("tickerSearch").value.trim();
+      const days = parseInt(document.getElementById("dateRange").value);
+      const tickersFilter = document.getElementById("filterTickers").value.trim();
+      const sentimentType = document.getElementById("sentimentType").value;
+      const keyword = document.getElementById("keywordFilter").value.trim();
+      const source = document.getElementById("sourceSelect").value;
+
+      // Load KPIs
+      try {
+        const summary = await fetchAPI("dashboard");
+        document.getElementById("totalCompanies").innerText = summary.total_companies ?? "—";
+      } catch (err) {
+        console.error("Error fetching summary", err);
+        // Set fallback values
+        document.getElementById("totalCompanies").innerText = "—";
+      }
+
+      // Load other sections
+      loadStockPrices(ticker || (tickersFilter.split(",")[0] || "AAPL"), days);
+      loadIndices(days);
+      loadSentimentTrend(ticker, days, sentimentType);
+      loadPriceSentimentOverlay(ticker || "AAPL", days);
+      loadNewsFeed(ticker || "", days, sentimentType);
+      loadTimeline(ticker, days);
+    }
+
+    // Updated stock prices function for FastAPI
+    async function loadStockPrices(ticker = "AAPL", days = 7) {
+      try {
+        const data = await fetchAPI("stock_analysis", { ticker, days });
+        const analysis = data.analysis || [];
+
+        if (analysis.length === 0) {
+          console.warn(`No stock data found for ticker: ${ticker}`);
+          return;
+        }
+
+        const labels = analysis.slice().reverse().map(d => d.date);
+        const close = analysis.slice().reverse().map(d => parseFloat(d.close_price || 0));
+
+        // Use correct column names from FastAPI
+        const ma5 = analysis.slice().reverse().map(d => d.ma_5 ? parseFloat(d.ma_5) : null);
+        const ma20 = analysis.slice().reverse().map(d => d.ma_20 ? parseFloat(d.ma_20) : null);
+        const ma50 = analysis.slice().reverse().map(d => d.ma_50 ? parseFloat(d.ma_50) : null);
+        const ma200 = analysis.slice().reverse().map(d => d.ma_200 ? parseFloat(d.ma_200) : null);
+
+        const ctx = document.getElementById("priceChart").getContext("2d");
+        if (priceChart) priceChart.destroy();
+
+        priceChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              { label: `${ticker} Close`, data: close, borderColor: "rgb(34,139,34)", tension:0.1, pointRadius: 2, fill: false },
+              { label: "MA 5", data: ma5, borderColor: "rgb(30,144,255)", borderDash: [5,5], tension:0.1, pointRadius: 0, fill: false },
+              { label: "MA 20", data: ma20, borderColor: "rgb(255,165,0)", borderDash: [5,5], tension:0.1, pointRadius: 0, fill: false },
+              { label: "MA 50", data: ma50, borderColor: "rgb(255,99,132)", borderDash: [5,5], tension:0.1, pointRadius: 0, fill: false },
+              { label: "MA 200", data: ma200, borderColor: "rgb(128,0,128)", borderDash: [10,5], tension:0.1, pointRadius: 0, fill: false }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+              x: { display: true, title: { display: true, text: 'Date' } },
+              y: { display: true, title: { display: true, text: 'Price ($)' } }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `${ctx.dataset.label}: $${ctx.formattedValue}`
+                }
+              },
+              legend: { display: true, position: 'top' }
+            }
+          }
+        });
+
+      } catch (err) {
+    console.error("Error loading stock prices", err);
+      }
+    } 
+
+    // Updated indices function for FastAPI
+    async function loadIndices(days = 30) {
+      try {
+        const data = await fetchAPI("indices", { days });
+
+        if (!data.indices || data.indices.length === 0) {
+          console.warn("No indices data available");
+          return;
+        }
+
+        const ctx = document.getElementById("indicesChart").getContext("2d");
+        if (indicesChart) indicesChart.destroy();
+
+        const datasets = data.indices.map((index, i) => ({
+          label: index.name,
+          data: index.values,
+          borderColor: [`rgb(255,99,132)`, `rgb(54,162,235)`, `rgb(255,205,86)`][i % 3],
+          tension: 0.1,
+          pointRadius: 1,
+          fill: false
+        }));
+
+        indicesChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.trend.map(t => t.date),
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { display: true, title: { display: true, text: 'Index Value' } }
+            },
+            plugins: {
+              legend: { display: true, position: 'top' }
+            }
+          }
+        });
+
+        // Update index cards
+        const indexCards = document.getElementById("indexCards");
+        indexCards.innerHTML = "";
+        (data.summary || []).forEach(index => {
+          const card = document.createElement("div");
+          card.className = "card p-2 text-center small";
+          card.style.minWidth = "120px";
+          const changeClass = index.change_percent >= 0 ? "text-success" : "text-danger";
+          card.innerHTML = `
+            <div><strong>${index.name}</strong></div>
+            <div class="${changeClass}">${index.change_percent >= 0 ? '+' : ''}${index.change_percent}%</div>
+          `;
+          indexCards.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error("Error loading indices", err);
+      }
+    }
+
+    // Updated sentiment trend function for FastAPI
+    async function loadSentimentTrend(ticker = "", days = 7, sentimentType = "") {
+      try {
+        const data = await fetchAPI("sentiment", { ticker, days });
+
+        const ctx = document.getElementById("sentimentTrendChart").getContext("2d");
+        if (sentimentTrendChart) sentimentTrendChart.destroy();
+
+        const trends = data.trends || [];
+        const labels = trends.map(t => t.date);
+        const sentiments = trends.map(t => t.avg_sentiment);
+
+        sentimentTrendChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [{
+              label: "Average Sentiment",
+              data: sentiments,
+              borderColor: "rgb(75,192,192)",
+              backgroundColor: "rgba(75,192,192,0.1)",
+              tension: 0.1,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                min: -1,
+                max: 1,
+                title: { display: true, text: 'Sentiment Score' }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `Sentiment: ${ctx.parsed.y.toFixed(3)}`
+                }
+              }
+            }
+          }
+        });
+
+        // Update statistics
+        const stats = data.statistics || {};
+        const highlights = document.getElementById("topicHighlights");
+        highlights.innerHTML = `
+          <div class="row">
+            <div class="col-4 text-center">
+              <div class="text-success"><strong>${stats.positive_count || 0}</strong></div>
+              <div>Positive</div>
+            </div>
+            <div class="col-4 text-center">
+              <div class="text-muted"><strong>${stats.neutral_count || 0}</strong></div>
+              <div>Neutral</div>
+            </div>
+            <div class="col-4 text-center">
+              <div class="text-danger"><strong>${stats.negative_count || 0}</strong></div>
+              <div>Negative</div>
+            </div>
+          </div>
+        `;
+
+      } catch (err) {
+        console.error("Error loading sentiment trend", err);
+      }
+    }
+
+    // Updated news feed function for FastAPI
+    async function loadNewsFeed(ticker = "", days = 7, sentimentType = "") {
+      try {
+        const data = await fetchAPI("news", {
+          ticker,
+          days,
+          sentiment: sentimentType,
+          limit: 10
+        });
+
+        const newsFeed = document.getElementById("newsFeed");
+        newsFeed.innerHTML = "";
+
+        const articles = data.articles || [];
+
+        if (articles.length === 0) {
+          newsFeed.innerHTML = '<div class="list-group-item text-muted">No news articles found</div>';
+          return;
+        }
+
+        articles.forEach(article => {
+          const item = document.createElement("div");
+          item.className = "list-group-item list-group-item-action";
+
+          const sentiment = article.sentiment_analysis?.overall_score || 0;
+          const sentimentClass = sentiment > 0.1 ? "sent-pos" : (sentiment < -0.1 ? "sent-neg" : "sent-ntrl");
+          const sentimentText = sentiment > 0.1 ? "+" : (sentiment < -0.1 ? "-" : "○");
+
+          item.innerHTML = `
+            <div class="d-flex justify-content-between">
+              <h6 class="mb-1">${article.title || 'No title'}</h6>
+              <small class="${sentimentClass}">${sentimentText}</small>
+            </div>
+            <p class="mb-1 small">${(article.content || '').substring(0, 120)}...</p>
+            <small class="text-muted">${article.source || 'Unknown'} • ${article.published_date || 'Unknown date'}</small>
+          `;
+
+          item.addEventListener("click", () => showArticleModal(article));
+          newsFeed.appendChild(item);
+        });
+
+      } catch (err) {
+        console.error("Error loading news feed", err);
+        document.getElementById("newsFeed").innerHTML = '<div class="list-group-item text-muted">Error loading news</div>';
+      }
+    }
+
+    // Updated alerts function for FastAPI
+    async function runAlerts() {
+      try {
+        const data = await fetchAPI("alerts", { limit: 5 });
+        const alerts = document.getElementById("alertsList");
+        alerts.innerHTML = "";
+
+        const alertsData = data.alerts || [];
+
+        if (alertsData.length === 0) {
+          alerts.innerHTML = '<div class="alert alert-info small">No alerts at this time</div>';
+          return;
+        }
+
+        alertsData.forEach(alert => {
+          const div = document.createElement("div");
+          const severityClass = alert.severity === 'high' ? 'alert-danger' :
+                               alert.severity === 'medium' ? 'alert-warning' : 'alert-info';
+          div.className = `alert ${severityClass} small mb-2`;
+          div.innerHTML = `
+            <strong>${alert.ticker}</strong><br>
+            ${alert.message}
+            <small class="d-block mt-1 text-muted">${alert.type}</small>
+          `;
+          alerts.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Error running alerts", err);
+        document.getElementById("alertsList").innerHTML = '<div class="alert alert-danger small">Error loading alerts</div>';
+      }
+    }
+
+    // Updated timeline function for FastAPI
+    async function loadTimeline(ticker = "", days = 30) {
+      try {
+        const data = await fetchAPI("timeline", { ticker, days });
+        const timeline = document.getElementById("trendTimeline");
+
+        const timelineData = data.timeline || [];
+
+        if (timelineData.length === 0) {
+          timeline.innerHTML = '<div class="text-muted">No timeline data available</div>';
+          return;
+        }
+
+        timeline.innerHTML = "<h6>Recent Activity</h6>";
+
+        timelineData.slice(0, 10).forEach(item => {
+          const div = document.createElement("div");
+          div.className = "border-bottom py-2 small";
+
+          const change = item.price_change_pct || 0;
+          const changeClass = change >= 0 ? "text-success" : "text-danger";
+          const changeText = change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`;
+
+          div.innerHTML = `
+            <div class="d-flex justify-content-between">
+              <strong>${item.ticker}</strong>
+              <span class="${changeClass}">${changeText}</span>
+            </div>
+            <div class="text-muted">
+              $${item.close_price} • ${item.date}
+            </div>
+          `;
+          timeline.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Error loading timeline", err);
+        document.getElementById("trendTimeline").innerHTML = '<div class="text-muted">Error loading timeline</div>';
+      }
+    }
+
+    // Price-sentiment overlay chart
+    async function loadPriceSentimentOverlay(ticker = "AAPL", days = 30) {
+      try {
+        // Get both stock and sentiment data
+        const [stockData, sentimentData] = await Promise.all([
+          fetchAPI("stock_analysis", { ticker, days }),
+          fetchAPI("sentiment", { ticker, days })
+        ]);
+
+        const ctx = document.getElementById("priceSentimentOverlay").getContext("2d");
+        if (overlayChart) overlayChart.destroy();
+
+        const stockAnalysis = stockData.analysis || [];
+        const sentimentTrends = sentimentData.trends || [];
+
+        if (stockAnalysis.length === 0) {
+          console.warn("No data for overlay chart");
+          return;
+        }
+
+        const labels = stockAnalysis.slice().reverse().map(d => d.date);
+        const prices = stockAnalysis.slice().reverse().map(d => parseFloat(d.close_price || 0));
+
+        // Match sentiment data to dates
+        const sentiments = labels.map(date => {
+          const sentimentDay = sentimentTrends.find(s => s.date === date);
+          return sentimentDay ? sentimentDay.avg_sentiment : null;
+        });
+
+        overlayChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: `${ticker} Price`,
+                data: prices,
+                borderColor: "rgb(34,139,34)",
+                yAxisID: 'y',
+                tension: 0.1
+              },
+              {
+                label: "Sentiment",
+                data: sentiments,
+                borderColor: "rgb(255,99,132)",
+                yAxisID: 'y1',
+                tension: 0.1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: { display: true, text: 'Price ($)' }
+              },
+              y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                min: -1,
+                max: 1,
+                title: { display: true, text: 'Sentiment' },
+                grid: { drawOnChartArea: false }
+              }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error("Error loading overlay chart", err);
+      }
+    }
+
+    // Utility functions
+    function showArticleModal(article) {
+      document.getElementById("articleModalTitle").textContent = article.title || 'Article';
+      document.getElementById("articleModalBody").innerHTML = `
+        <p><strong>Source:</strong> ${article.source || 'Unknown'}</p>
+        <p><strong>Date:</strong> ${article.published_date || 'Unknown'}</p>
+        <p><strong>Ticker:</strong> ${article.ticker || 'N/A'}</p>
+        <div>${article.content || 'No content available'}</div>
+      `;
+
+      const modal = new bootstrap.Modal(document.getElementById("articleModal"));
+      modal.show();
+    }
+
+    function toggleCandlestick() {
+      alert("Candlestick view: Feature coming soon");
+    }
+
+    function exportCurrentViewCSV() {
+      alert("CSV export: Feature coming soon");
+    }
+
+    function generateWordCloud() {
+      alert("Word cloud: Feature coming soon");
+    }
+
+    // Placeholder for sector heatmap
+    async function loadSectorHeatmap(days) {
+      document.getElementById("sectorHeatmap").innerHTML =
+        '<div class="text-muted p-4 text-center">Sector heatmap visualization<br><small>Feature coming soon</small></div>';
+    }
+
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+      console.log("Auto-refreshing dashboard...");
+      loadDashboard();
+    }, 5 * 60 * 1000);
+  </script>
+</body>
+</html>
