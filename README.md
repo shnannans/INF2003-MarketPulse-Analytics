@@ -269,9 +269,9 @@ CREATE TABLE portfolio_holdings (
 SHOW TABLES;
 ```
 
-## Known Issues & TODO List for Group Members
+## TODO List
 
-### TODOs
+### TODOs (Just a suggestion)
 
 **1. News Search Improvements**
 - **Issue**: Ticker-based search (e.g., "AAPL") returns fewer results than company name search (e.g., "Apple")
