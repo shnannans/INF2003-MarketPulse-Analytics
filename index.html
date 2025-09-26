@@ -122,6 +122,13 @@
       .api-status { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
       .api-status.online { background-color: #d1edff; color: #0c63e4; }
       .api-status.offline { background-color: #f8d7da; color: #721c24; }
+
+      /* Skeleton loader */
+      .skeleton { position: relative; overflow: hidden; background: #e9ecef; border-radius: 8px; }
+      .skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+        animation: shimmer 1.2s infinite; }
+      @keyframes shimmer { 100% { transform: translateX(100%); } }
     </style>
 </head>
 <body class="bg-light">
@@ -210,8 +217,12 @@
         <!-- Stock Performance Overview -->
         <section class="card p-3 mb-3 shadow-sm">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="mb-0">Stock Performance Overview</h5>
-            <div>
+            <div class="d-flex align-items-center gap-3">
+              <h5 class="mb-0">Stock Performance Overview</h5>
+              <span id="dataSourceBadge" class="badge text-bg-light">—</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <small id="lastUpdated" class="text-muted">—</small>
               <button id="btnToggleCandlestick" class="btn btn-sm btn-outline-secondary">Toggle Candlestick</button>
             </div>
           </div>
@@ -219,6 +230,7 @@
           <div class="row">
             <div class="col-lg-9">
               <div class="chart-container">
+                <div id="priceChartSkeleton" class="skeleton w-100 h-100 position-absolute"></div>
                 <canvas id="priceChart"></canvas>
               </div>
             </div>
@@ -364,8 +376,8 @@
       }
     }
 
-    // Generic API fetch function with error handling
-    async function fetchAPI(endpoint, params = {}) {
+    // Generic API fetch with timeout/backoff + status update
+    async function fetchAPI(endpoint, params = {}, { timeout = 8000, retries = 2 } = {}) {
       try {
         const url = new URL(endpoint, window.API_BASE);
         Object.keys(params).forEach(key => {
@@ -373,23 +385,23 @@
             url.searchParams.append(key, params[key]);
           }
         });
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        let lastError = null;
+        for (let attempt = 0; attempt <= retries; attempt++) {
+          try {
+            const controller = new AbortController();
+            const t = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' }, signal: controller.signal });
+            clearTimeout(t);
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const data = await response.json();
+            if (data.status === 'error') throw new Error(data.error || 'API returned error status');
+            return data;
+          } catch (e) {
+            lastError = e;
+            if (attempt < retries) await new Promise(r => setTimeout(r, (attempt + 1) * 1000));
+          }
         }
-
-        const data = await response.json();
-
-        if (data.status === 'error') {
-          throw new Error(data.error || 'API returned error status');
-        }
-
-        return data;
+        throw lastError || new Error('Request failed');
       } catch (error) {
         console.error(`API call failed for ${endpoint}:`, error);
         throw error;
@@ -426,6 +438,8 @@
     // Updated stock prices function for FastAPI
     async function loadStockPrices(ticker = "AAPL", days = 7) {
       try {
+        // show skeleton while loading
+        const sk = document.getElementById('priceChartSkeleton'); if (sk) sk.style.display = 'block';
         const data = await fetchAPI("stock_analysis", { ticker, days });
         const analysis = data.analysis || [];
 
@@ -477,8 +491,16 @@
           }
         });
 
+        // hide skeleton and update badges
+        if (sk) sk.style.display = 'none';
+        const ds = document.getElementById('dataSourceBadge');
+        if (ds) ds.textContent = (data.data_source || '—').replace('_', ' ');
+        const lu = document.getElementById('lastUpdated');
+        if (lu) lu.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+
       } catch (err) {
     console.error("Error loading stock prices", err);
+        const sk = document.getElementById('priceChartSkeleton'); if (sk) sk.style.display = 'none';
       }
     } 
 

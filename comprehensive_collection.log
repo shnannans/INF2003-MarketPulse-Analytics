@@ -1,0 +1,294 @@
+2025-09-26 14:41:58,053 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-09-26 14:41:58,285 - INFO - package: mysql.connector.plugins
+2025-09-26 14:41:58,286 - INFO - plugin_name: mysql_native_password
+2025-09-26 14:41:58,303 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 14:41:58,311 - INFO - package: mysql.connector.plugins
+2025-09-26 14:41:58,311 - INFO - plugin_name: auth_gssapi_client
+2025-09-26 14:41:58,312 - WARNING - Requested Module was not found: No module named 'mysql.connector.plugins.auth_gssapi_client'
+2025-09-26 14:41:58,372 - ERROR - Error creating MySQL database: Authentication plugin 'auth_gssapi_client' is not supported
+2025-09-26 14:46:21,225 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-09-26 14:46:21,443 - INFO - package: mysql.connector.plugins
+2025-09-26 14:46:21,444 - INFO - plugin_name: mysql_native_password
+2025-09-26 14:46:21,445 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 14:46:21,451 - INFO - package: mysql.connector.plugins
+2025-09-26 14:46:21,451 - INFO - plugin_name: auth_gssapi_client
+2025-09-26 14:46:21,452 - WARNING - Requested Module was not found: No module named 'mysql.connector.plugins.auth_gssapi_client'
+2025-09-26 14:46:21,458 - ERROR - Error creating MySQL database: Authentication plugin 'auth_gssapi_client' is not supported
+2025-09-26 14:46:28,498 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-09-26 14:46:28,598 - INFO - package: mysql.connector.plugins
+2025-09-26 14:46:28,598 - INFO - plugin_name: mysql_native_password
+2025-09-26 14:46:28,599 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 14:46:28,600 - INFO - package: mysql.connector.plugins
+2025-09-26 14:46:28,600 - INFO - plugin_name: auth_gssapi_client
+2025-09-26 14:46:28,600 - WARNING - Requested Module was not found: No module named 'mysql.connector.plugins.auth_gssapi_client'
+2025-09-26 14:46:28,603 - ERROR - Error creating MySQL database: Authentication plugin 'auth_gssapi_client' is not supported
+2025-09-26 14:48:23,514 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-09-26 14:48:23,653 - INFO - package: mysql.connector.plugins
+2025-09-26 14:48:23,654 - INFO - plugin_name: mysql_native_password
+2025-09-26 14:48:23,655 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 14:48:23,658 - INFO - package: mysql.connector.plugins
+2025-09-26 14:48:23,658 - INFO - plugin_name: auth_gssapi_client
+2025-09-26 14:48:23,659 - WARNING - Requested Module was not found: No module named 'mysql.connector.plugins.auth_gssapi_client'
+2025-09-26 14:48:23,662 - ERROR - Error creating MySQL database: Authentication plugin 'auth_gssapi_client' is not supported
+2025-09-26 14:54:15,737 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-09-26 14:54:16,859 - INFO - package: mysql.connector.plugins
+2025-09-26 14:54:16,859 - INFO - plugin_name: mysql_native_password
+2025-09-26 14:54:16,861 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 14:54:18,142 - INFO - MySQL database 'databaseproj' created/verified
+2025-09-26 14:54:20,207 - INFO - Connected to MySQL database: databaseproj
+2025-09-26 14:54:20,225 - INFO - Connected to MongoDB database: databaseproj
+2025-09-26 14:54:20,226 - INFO - Creating frontend-compatible database tables...
+2025-09-26 14:54:22,565 - INFO - Enhanced MySQL tables created successfully
+2025-09-26 14:54:22,565 - INFO - Collecting market indices...
+2025-09-26 14:54:22,824 - INFO - Collecting index data for S&P 500
+2025-09-26 14:54:24,082 - ERROR - Error collecting index data for ^GSPC: 1054 (42S22): Unknown column 'high_price' in 'field list'
+2025-09-26 14:54:24,083 - INFO - Collecting index data for Dow Jones
+2025-09-26 14:54:24,437 - ERROR - Error collecting index data for ^DJI: 1054 (42S22): Unknown column 'high_price' in 'field list'
+2025-09-26 14:54:24,437 - INFO - Collecting index data for NASDAQ
+2025-09-26 14:54:24,881 - ERROR - Error collecting index data for ^IXIC: 1054 (42S22): Unknown column 'high_price' in 'field list'
+2025-09-26 14:54:25,192 - INFO - Market indices collection completed
+2025-09-26 14:54:25,192 - INFO - Collecting enhanced stock data...
+2025-09-26 14:54:25,482 - INFO - Collecting enhanced data for AAPL
+2025-09-26 14:54:25,918 - ERROR - Error collecting enhanced data for AAPL: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:25,918 - INFO - Collecting enhanced data for MSFT
+2025-09-26 14:54:26,355 - ERROR - Error collecting enhanced data for MSFT: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:26,355 - INFO - Collecting enhanced data for GOOGL
+2025-09-26 14:54:26,794 - ERROR - Error collecting enhanced data for GOOGL: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:26,794 - INFO - Collecting enhanced data for AMZN
+2025-09-26 14:54:27,160 - ERROR - Error collecting enhanced data for AMZN: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:27,160 - INFO - Collecting enhanced data for TSLA
+2025-09-26 14:54:27,556 - ERROR - Error collecting enhanced data for TSLA: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:27,556 - INFO - Collecting enhanced data for META
+2025-09-26 14:54:27,964 - ERROR - Error collecting enhanced data for META: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:27,965 - INFO - Collecting enhanced data for NVDA
+2025-09-26 14:54:28,331 - ERROR - Error collecting enhanced data for NVDA: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:28,332 - INFO - Collecting enhanced data for JPM
+2025-09-26 14:54:28,726 - ERROR - Error collecting enhanced data for JPM: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:28,727 - INFO - Collecting enhanced data for V
+2025-09-26 14:54:29,088 - ERROR - Error collecting enhanced data for V: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:29,089 - INFO - Collecting enhanced data for JNJ
+2025-09-26 14:54:29,406 - ERROR - Error collecting enhanced data for JNJ: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:29,406 - INFO - Collecting enhanced data for WMT
+2025-09-26 14:54:29,730 - ERROR - Error collecting enhanced data for WMT: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:29,730 - INFO - Collecting enhanced data for PG
+2025-09-26 14:54:30,045 - ERROR - Error collecting enhanced data for PG: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:30,045 - INFO - Collecting enhanced data for UNH
+2025-09-26 14:54:30,370 - ERROR - Error collecting enhanced data for UNH: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:30,370 - INFO - Collecting enhanced data for HD
+2025-09-26 14:54:30,713 - ERROR - Error collecting enhanced data for HD: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:30,714 - INFO - Collecting enhanced data for MA
+2025-09-26 14:54:31,030 - ERROR - Error collecting enhanced data for MA: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:31,031 - INFO - Collecting enhanced data for DIS
+2025-09-26 14:54:31,359 - ERROR - Error collecting enhanced data for DIS: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:31,359 - INFO - Collecting enhanced data for PYPL
+2025-09-26 14:54:31,678 - ERROR - Error collecting enhanced data for PYPL: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:31,678 - INFO - Collecting enhanced data for BAC
+2025-09-26 14:54:32,006 - ERROR - Error collecting enhanced data for BAC: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:32,007 - INFO - Collecting enhanced data for ADBE
+2025-09-26 14:54:32,328 - ERROR - Error collecting enhanced data for ADBE: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:32,329 - INFO - Collecting enhanced data for CRM
+2025-09-26 14:54:32,662 - ERROR - Error collecting enhanced data for CRM: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:32,662 - INFO - Collecting enhanced data for NFLX
+2025-09-26 14:54:32,988 - ERROR - Error collecting enhanced data for NFLX: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:32,989 - INFO - Collecting enhanced data for NKE
+2025-09-26 14:54:33,320 - ERROR - Error collecting enhanced data for NKE: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:33,321 - INFO - Collecting enhanced data for TMO
+2025-09-26 14:54:33,635 - ERROR - Error collecting enhanced data for TMO: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:33,636 - INFO - Collecting enhanced data for ABT
+2025-09-26 14:54:33,975 - ERROR - Error collecting enhanced data for ABT: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:33,975 - INFO - Collecting enhanced data for COST
+2025-09-26 14:54:34,286 - ERROR - Error collecting enhanced data for COST: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:34,286 - INFO - Collecting enhanced data for PFE
+2025-09-26 14:54:34,604 - ERROR - Error collecting enhanced data for PFE: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:34,604 - INFO - Collecting enhanced data for AVGO
+2025-09-26 14:54:34,913 - ERROR - Error collecting enhanced data for AVGO: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:34,914 - INFO - Collecting enhanced data for XOM
+2025-09-26 14:54:35,240 - ERROR - Error collecting enhanced data for XOM: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:35,240 - INFO - Collecting enhanced data for CVX
+2025-09-26 14:54:35,562 - ERROR - Error collecting enhanced data for CVX: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:35,562 - INFO - Collecting enhanced data for KO
+2025-09-26 14:54:35,905 - ERROR - Error collecting enhanced data for KO: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:35,905 - INFO - Collecting enhanced data for PEP
+2025-09-26 14:54:36,214 - ERROR - Error collecting enhanced data for PEP: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:36,215 - INFO - Collecting enhanced data for INTC
+2025-09-26 14:54:36,550 - ERROR - Error collecting enhanced data for INTC: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:36,551 - INFO - Collecting enhanced data for CSCO
+2025-09-26 14:54:36,893 - ERROR - Error collecting enhanced data for CSCO: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:36,894 - INFO - Collecting enhanced data for VZ
+2025-09-26 14:54:37,208 - ERROR - Error collecting enhanced data for VZ: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:37,209 - INFO - Collecting enhanced data for MRK
+2025-09-26 14:54:37,520 - ERROR - Error collecting enhanced data for MRK: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:37,520 - INFO - Collecting enhanced data for T
+2025-09-26 14:54:37,856 - ERROR - Error collecting enhanced data for T: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:37,856 - INFO - Collecting enhanced data for DHR
+2025-09-26 14:54:38,165 - ERROR - Error collecting enhanced data for DHR: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:38,166 - INFO - Collecting enhanced data for TXN
+2025-09-26 14:54:38,475 - ERROR - Error collecting enhanced data for TXN: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:38,475 - INFO - Collecting enhanced data for LLY
+2025-09-26 14:54:38,797 - ERROR - Error collecting enhanced data for LLY: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:38,797 - INFO - Collecting enhanced data for ACN
+2025-09-26 14:54:39,112 - ERROR - Error collecting enhanced data for ACN: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:39,112 - INFO - Collecting enhanced data for HON
+2025-09-26 14:54:39,433 - ERROR - Error collecting enhanced data for HON: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:39,434 - INFO - Collecting enhanced data for MDT
+2025-09-26 14:54:39,760 - ERROR - Error collecting enhanced data for MDT: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:39,761 - INFO - Collecting enhanced data for UPS
+2025-09-26 14:54:40,070 - ERROR - Error collecting enhanced data for UPS: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:40,070 - INFO - Collecting enhanced data for QCOM
+2025-09-26 14:54:40,377 - ERROR - Error collecting enhanced data for QCOM: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:40,377 - INFO - Collecting enhanced data for IBM
+2025-09-26 14:54:40,688 - ERROR - Error collecting enhanced data for IBM: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:40,689 - INFO - Collecting enhanced data for BMY
+2025-09-26 14:54:41,029 - ERROR - Error collecting enhanced data for BMY: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:41,029 - INFO - Collecting enhanced data for NEE
+2025-09-26 14:54:41,342 - ERROR - Error collecting enhanced data for NEE: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:41,343 - INFO - Collecting enhanced data for SBUX
+2025-09-26 14:54:41,663 - ERROR - Error collecting enhanced data for SBUX: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:41,664 - INFO - Collecting enhanced data for AMT
+2025-09-26 14:54:41,968 - ERROR - Error collecting enhanced data for AMT: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:41,968 - INFO - Collecting enhanced data for LOW
+2025-09-26 14:54:42,290 - ERROR - Error collecting enhanced data for LOW: 1054 (42S22): Unknown column 'industry' in 'field list'
+2025-09-26 14:54:42,510 - INFO - Enhanced stock data collection completed
+2025-09-26 14:54:42,510 - INFO - Collecting sector performance...
+2025-09-26 14:54:42,727 - INFO - Collecting sector data for Technology
+2025-09-26 14:55:12,987 - INFO - Collecting sector data for Financials
+2025-09-26 14:55:40,437 - INFO - Collecting sector data for Energy
+2025-09-26 14:56:08,578 - INFO - Collecting sector data for Healthcare
+2025-09-26 14:56:38,873 - INFO - Collecting sector data for Industrials
+2025-09-26 14:57:06,571 - INFO - Collecting sector data for Consumer Staples
+2025-09-26 14:57:36,971 - INFO - Collecting sector data for Consumer Discretionary
+2025-09-26 14:58:05,446 - INFO - Collecting sector data for Utilities
+2025-09-26 14:58:35,256 - INFO - Collecting sector data for Materials
+2025-09-26 14:59:05,545 - INFO - Collecting sector data for Real Estate
+2025-09-26 14:59:36,619 - INFO - Collecting sector data for Communication Services
+2025-09-26 15:00:06,655 - INFO - Sector performance collection completed
+2025-09-26 15:00:06,657 - INFO - Generating comprehensive news...
+2025-09-26 15:00:06,658 - INFO - Generating comprehensive news dataset...
+2025-09-26 15:00:07,787 - INFO - Inserted 1000 comprehensive news articles
+2025-09-26 15:00:07,789 - INFO - Creating sample portfolio...
+2025-09-26 15:00:09,634 - INFO - Sample portfolio data generated
+2025-09-26 15:00:09,634 - INFO - Verifying frontend compatibility...
+2025-09-26 15:00:10,073 - INFO - Table companies: 6 records (Company dropdown and info)
+2025-09-26 15:00:10,292 - INFO - Table stock_prices: 102 records (Price charts with technical indicators)
+2025-09-26 15:00:10,511 - INFO - Table financial_metrics: 0 records (KPI cards and company details (REQUIRED by get_companies.php))
+2025-09-26 15:00:10,512 - WARNING - WARNING: financial_metrics is empty - KPI cards and company details (REQUIRED by get_companies.php) won't work
+2025-09-26 15:00:10,887 - INFO - Table market_indices: 0 records (Market indices charts)
+2025-09-26 15:00:10,888 - WARNING - WARNING: market_indices is empty - Market indices charts won't work
+2025-09-26 15:00:11,112 - INFO - Table sector_performance: 1320 records (Sector heatmaps)
+2025-09-26 15:00:11,400 - INFO - Table portfolio_holdings: 5 records (Portfolio widgets)
+2025-09-26 15:00:11,677 - INFO - SUCCESS: get_companies.php query test passed
+2025-09-26 15:00:11,677 - INFO -    4: PE=None, Beta=None, Records=22
+2025-09-26 15:00:11,677 - INFO -    1: PE=None, Beta=None, Records=7
+2025-09-26 15:00:11,678 - INFO -    2: PE=None, Beta=None, Records=22
+2025-09-26 15:00:11,717 - INFO - MongoDB news articles: 1000 (for news feed)
+2025-09-26 15:08:04,550 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-09-26 15:08:05,703 - INFO - package: mysql.connector.plugins
+2025-09-26 15:08:05,704 - INFO - plugin_name: mysql_native_password
+2025-09-26 15:08:05,707 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-09-26 15:08:06,830 - INFO - MySQL database 'databaseproj' created/verified
+2025-09-26 15:08:08,578 - INFO - Connected to MySQL database: databaseproj
+2025-09-26 15:08:08,621 - INFO - Connected to MongoDB database: databaseproj
+2025-09-26 15:08:08,622 - INFO - Creating frontend-compatible database tables...
+2025-09-26 15:08:10,399 - INFO - Enhanced MySQL tables created successfully
+2025-09-26 15:08:10,400 - INFO - Collecting market indices...
+2025-09-26 15:08:10,618 - INFO - Collecting index data for S&P 500
+2025-09-26 15:08:42,181 - INFO - Collecting index data for Dow Jones
+2025-09-26 15:09:12,373 - INFO - Collecting index data for NASDAQ
+2025-09-26 15:09:43,571 - INFO - Market indices collection completed
+2025-09-26 15:09:43,571 - INFO - Collecting enhanced stock data...
+2025-09-26 15:09:43,789 - INFO - Collecting enhanced data for AAPL
+2025-09-26 15:10:47,163 - INFO - Collecting enhanced data for MSFT
+2025-09-26 15:11:48,347 - INFO - Collecting enhanced data for GOOGL
+2025-09-26 15:12:51,017 - INFO - Collecting enhanced data for AMZN
+2025-09-26 15:13:56,471 - INFO - Collecting enhanced data for TSLA
+2025-09-26 15:14:59,742 - INFO - Collecting enhanced data for META
+2025-09-26 15:16:03,222 - INFO - Collecting enhanced data for NVDA
+2025-09-26 15:17:05,678 - INFO - Collecting enhanced data for JPM
+2025-09-26 15:18:07,981 - INFO - Collecting enhanced data for V
+2025-09-26 15:19:09,731 - INFO - Collecting enhanced data for JNJ
+2025-09-26 15:20:10,394 - INFO - Collecting enhanced data for WMT
+2025-09-26 15:21:10,802 - INFO - Collecting enhanced data for PG
+2025-09-26 15:22:12,347 - INFO - Collecting enhanced data for UNH
+2025-09-26 15:23:12,365 - INFO - Collecting enhanced data for HD
+2025-09-26 15:24:12,074 - INFO - Collecting enhanced data for MA
+2025-09-26 15:25:13,363 - INFO - Collecting enhanced data for DIS
+2025-09-26 15:26:17,274 - INFO - Collecting enhanced data for PYPL
+2025-09-26 15:27:17,964 - INFO - Collecting enhanced data for BAC
+2025-09-26 15:28:18,614 - INFO - Collecting enhanced data for ADBE
+2025-09-26 15:29:18,696 - INFO - Collecting enhanced data for CRM
+2025-09-26 15:30:22,149 - INFO - Collecting enhanced data for NFLX
+2025-09-26 15:31:24,704 - INFO - Collecting enhanced data for NKE
+2025-09-26 15:32:23,337 - INFO - Collecting enhanced data for TMO
+2025-09-26 15:33:23,336 - INFO - Collecting enhanced data for ABT
+2025-09-26 15:34:24,668 - INFO - Collecting enhanced data for COST
+2025-09-26 15:35:24,523 - INFO - Collecting enhanced data for PFE
+2025-09-26 15:36:24,588 - INFO - Collecting enhanced data for AVGO
+2025-09-26 15:37:25,223 - INFO - Collecting enhanced data for XOM
+2025-09-26 15:38:24,821 - INFO - Collecting enhanced data for CVX
+2025-09-26 15:39:26,012 - INFO - Collecting enhanced data for KO
+2025-09-26 15:40:30,108 - INFO - Collecting enhanced data for PEP
+2025-09-26 15:41:32,322 - INFO - Collecting enhanced data for INTC
+2025-09-26 15:42:32,969 - INFO - Collecting enhanced data for CSCO
+2025-09-26 15:43:34,478 - INFO - Collecting enhanced data for VZ
+2025-09-26 15:44:35,755 - INFO - Collecting enhanced data for MRK
+2025-09-26 15:45:37,611 - INFO - Collecting enhanced data for T
+2025-09-26 15:46:38,996 - INFO - Collecting enhanced data for DHR
+2025-09-26 15:47:40,045 - INFO - Collecting enhanced data for TXN
+2025-09-26 15:48:43,420 - INFO - Collecting enhanced data for LLY
+2025-09-26 15:49:44,586 - INFO - Collecting enhanced data for ACN
+2025-09-26 15:50:48,713 - INFO - Collecting enhanced data for HON
+2025-09-26 15:51:48,317 - INFO - Collecting enhanced data for MDT
+2025-09-26 15:52:49,457 - INFO - Collecting enhanced data for UPS
+2025-09-26 15:53:49,722 - INFO - Collecting enhanced data for QCOM
+2025-09-26 15:54:53,271 - INFO - Collecting enhanced data for IBM
+2025-09-26 15:55:56,550 - INFO - Collecting enhanced data for BMY
+2025-09-26 15:56:56,640 - INFO - Collecting enhanced data for NEE
+2025-09-26 15:57:56,736 - INFO - Collecting enhanced data for SBUX
+2025-09-26 15:58:58,889 - INFO - Collecting enhanced data for AMT
+2025-09-26 16:00:02,147 - INFO - Collecting enhanced data for LOW
+2025-09-26 16:01:03,301 - INFO - Enhanced stock data collection completed
+2025-09-26 16:01:03,302 - INFO - Collecting sector performance...
+2025-09-26 16:01:03,525 - INFO - Collecting sector data for Technology
+2025-09-26 16:01:33,601 - INFO - Collecting sector data for Financials
+2025-09-26 16:02:04,324 - INFO - Collecting sector data for Energy
+2025-09-26 16:02:36,000 - INFO - Collecting sector data for Healthcare
+2025-09-26 16:03:06,198 - INFO - Collecting sector data for Industrials
+2025-09-26 16:03:38,102 - INFO - Collecting sector data for Consumer Staples
+2025-09-26 16:04:06,414 - INFO - Collecting sector data for Consumer Discretionary
+2025-09-26 16:04:37,633 - INFO - Collecting sector data for Utilities
+2025-09-26 16:05:07,779 - INFO - Collecting sector data for Materials
+2025-09-26 16:05:38,416 - INFO - Collecting sector data for Real Estate
+2025-09-26 16:06:07,305 - INFO - Collecting sector data for Communication Services
+2025-09-26 16:06:36,661 - INFO - Sector performance collection completed
+2025-09-26 16:06:36,662 - INFO - Generating comprehensive news...
+2025-09-26 16:06:36,672 - INFO - Generating comprehensive news dataset...
+2025-09-26 16:06:38,842 - INFO - Inserted 1000 comprehensive news articles
+2025-09-26 16:06:38,845 - INFO - Creating sample portfolio...
+2025-09-26 16:06:40,384 - INFO - Sample portfolio data generated
+2025-09-26 16:06:40,384 - INFO - Verifying frontend compatibility...
+2025-09-26 16:06:40,829 - INFO - Table companies: 50 records (Company dropdown and info)
+2025-09-26 16:06:41,050 - INFO - Table stock_prices: 12500 records (Price charts with technical indicators)
+2025-09-26 16:06:41,275 - INFO - Table financial_metrics: 50 records (KPI cards and company details (REQUIRED by get_companies.php))
+2025-09-26 16:06:41,491 - INFO - Table market_indices: 360 records (Market indices charts)
+2025-09-26 16:06:41,711 - INFO - Table sector_performance: 1320 records (Sector heatmaps)
+2025-09-26 16:06:41,930 - INFO - Table portfolio_holdings: 5 records (Portfolio widgets)
+2025-09-26 16:06:42,158 - INFO - SUCCESS: get_companies.php query test passed
+2025-09-26 16:06:42,158 - INFO -    NVDA: PE=NMS, Beta=https://www.nvidia.com, Records=2025-09-26 07:16:02
+2025-09-26 16:06:42,158 - INFO -    AAPL: PE=NMS, Beta=https://www.apple.com, Records=2025-09-26 07:09:43
+2025-09-26 16:06:42,158 - INFO -    MSFT: PE=NMS, Beta=https://www.microsoft.com, Records=2025-09-26 07:10:46
+2025-09-26 16:06:42,210 - INFO - MongoDB news articles: 2000 (for news feed)
+2025-09-26 16:06:42,211 - INFO - FRONTEND-INTEGRATED collection completed successfully!
+2025-09-26 16:06:42,211 - INFO - 
+2025-09-26 16:06:42,211 - INFO - Your PHP frontend should now display:
+2025-09-26 16:06:42,211 - INFO -    Company dropdown with all major stocks
+2025-09-26 16:06:42,212 - INFO -    Stock price charts with moving averages
+2025-09-26 16:06:42,212 - INFO -    Market indices charts (S&P 500, NASDAQ, Dow)
+2025-09-26 16:06:42,212 - INFO -    Financial metrics in KPI cards
+2025-09-26 16:06:42,212 - INFO -    News feed with sentiment analysis
+2025-09-26 16:06:42,212 - INFO -    Sector performance data
+2025-09-26 16:06:42,213 - INFO -    Portfolio widgets with sample data
+2025-09-26 16:06:42,213 - INFO - 
+2025-09-26 16:06:42,213 - INFO - Next steps:
+2025-09-26 16:06:42,213 - INFO - 1. Start your web server (XAMPP/WAMP/MAMP)
+2025-09-26 16:06:42,213 - INFO - 2. Open http://localhost/your-project-folder/index.html
+2025-09-26 16:06:42,214 - INFO - 3. Enjoy your data-driven dashboard!

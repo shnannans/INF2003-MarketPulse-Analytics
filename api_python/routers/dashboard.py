@@ -55,7 +55,7 @@ async def get_dashboard(
 
         # Get MongoDB statistics
         try:
-            if collection:
+            if collection is not None:
                 # Total articles
                 total_articles = await collection.count_documents({})
 

@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
 class FrontendIntegratedCollector:
     def __init__(self):
         self.mysql_config = {
-            "host": "localhost",
+            "host": "34.133.0.30",
             "user": "root",
-            "password": "", # UPDATE TO MATCH YOUR PASSWORD in mysql workbench else left blank
-            "port": 3306 # change to your port number for mysql
+            "password": "Password123@",
+            "port": 3306
         }
         
         self.mongo_config = {
@@ -80,11 +80,12 @@ class FrontendIntegratedCollector:
                 host=self.mysql_config['host'],
                 user=self.mysql_config['user'],
                 password=self.mysql_config['password'],
-                port=self.mysql_config['port']
+                port=self.mysql_config['port'],
+                auth_plugin='mysql_native_password'
             )
             cursor = conn.cursor()
-            cursor.execute("CREATE DATABASE IF NOT EXISTS financial_db")
-            logger.info("MySQL database 'financial_db' created/verified")
+            cursor.execute("CREATE DATABASE IF NOT EXISTS databaseproj")
+            logger.info("MySQL database 'databaseproj' created/verified")
             cursor.close()
             conn.close()
             return True
@@ -96,15 +97,23 @@ class FrontendIntegratedCollector:
         """Connect to both databases"""
         try:
             mysql_config = self.mysql_config.copy()
-            mysql_config['database'] = 'financial_db'
-            self.mysql_conn = mysql.connector.connect(**mysql_config)
-            logger.info("Connected to MySQL database: financial_db")
+            mysql_config['database'] = 'databaseproj'
+            # Ensure native password plugin is used
+            self.mysql_conn = mysql.connector.connect(
+                host=mysql_config['host'],
+                user=mysql_config['user'],
+                password=mysql_config['password'],
+                port=mysql_config['port'],
+                database=mysql_config['database'],
+                auth_plugin='mysql_native_password'
+            )
+            logger.info("Connected to MySQL database: databaseproj")
             
             mongo_client = MongoClient(f"mongodb://{self.mongo_config['host']}:{self.mongo_config['port']}/")
             mongo_db = mongo_client[self.mongo_config['database']]
             self.mongo_collection = mongo_db[self.mongo_config['collection']]
             mongo_client.server_info()
-            logger.info("Connected to MongoDB database: financial_db")
+            logger.info("Connected to MongoDB database: databaseproj")
             
             return True
         except Exception as e:

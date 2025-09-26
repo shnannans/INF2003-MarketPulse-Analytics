@@ -307,7 +307,7 @@ async def fetch_news_async(query: str, days: int = 7, language: str = 'en') -> L
 async def get_company_info_from_db(ticker: str) -> Dict:
     """Get company search terms from MySQL database"""
     try:
-        async with get_mysql_session() as db:
+        async for db in get_mysql_session():
             stmt = select(Company).where(Company.ticker == ticker.upper())
             result = await db.execute(stmt)
             company = result.first()

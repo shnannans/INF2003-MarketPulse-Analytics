@@ -15,14 +15,14 @@ logger = logging.getLogger(__name__)
 
 # Database URLs - matching your PHP configuration
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_NAME = os.getenv("DB_NAME", "financial_db")
+DB_NAME = os.getenv("DB_NAME", "databaseproj")
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASS = os.getenv("DB_PASS", "")  # XAMPP default is empty
 DB_PORT = os.getenv("DB_PORT", "3307")
 
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 MONGO_PORT = int(os.getenv("MONGO_PORT", "27017"))
-MONGO_DB = os.getenv("MONGO_DB", "financial_db")
+MONGO_DB = os.getenv("MONGO_DB", "databaseproj")
 MONGO_COLLECTION = os.getenv("MONGO_COLLECTION", "financial_news")
 
 # Construct database URLs

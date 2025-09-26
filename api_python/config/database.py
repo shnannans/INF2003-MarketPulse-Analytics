@@ -11,9 +11,9 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # Database URLs
-MYSQL_URL = f"mysql+aiomysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASS', '')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'financial_db')}"
+MYSQL_URL = f"mysql+aiomysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASS', '')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'databaseproj')}"
 MONGO_URL = f"mongodb://{os.getenv('MONGO_HOST', 'localhost')}:{os.getenv('MONGO_PORT', '27017')}"
-MONGO_DB_NAME = os.getenv('MONGO_DB', 'financial_db')
+MONGO_DB_NAME = os.getenv('MONGO_DB', 'databaseproj')
 MONGO_COLLECTION_NAME = os.getenv('MONGO_COLLECTION', 'financial_news')
 
 # Global variables for database connections
