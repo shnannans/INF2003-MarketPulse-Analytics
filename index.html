@@ -427,11 +427,17 @@
       }
 
       // Load other sections
-      loadStockPrices(ticker || (tickersFilter.split(",")[0] || "AAPL"), days);
+      if (ticker) {
+        // If specific ticker is selected, show that ticker
+        loadStockPrices(ticker, days);
+      } else {
+        // If no ticker selected, show multiple major stocks
+        loadMultipleStocks(days);
+      }
       loadIndices(days);
-      loadSentimentTrend(ticker, days, sentimentType);
+      loadSentimentTrend(ticker, days, sentimentType, keyword, source);
       loadPriceSentimentOverlay(ticker || "AAPL", days);
-      loadNewsFeed(ticker || "", days, sentimentType);
+      loadNewsFeed(ticker || "", days, sentimentType, keyword, source);
       loadTimeline(ticker, days);
     }
 
@@ -502,7 +508,110 @@
     console.error("Error loading stock prices", err);
         const sk = document.getElementById('priceChartSkeleton'); if (sk) sk.style.display = 'none';
       }
-    } 
+    }
+
+    // Load multiple major stocks for overview
+    async function loadMultipleStocks(days = 7) {
+      try {
+        // show skeleton while loading
+        const sk = document.getElementById('priceChartSkeleton'); if (sk) sk.style.display = 'block';
+        
+        // Major stocks to show
+        const majorStocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'];
+        const stockData = {};
+        
+        // Fetch data for each stock
+        for (const ticker of majorStocks) {
+          try {
+            const data = await fetchAPI("stock_analysis", { ticker, days });
+            if (data.analysis && data.analysis.length > 0) {
+              stockData[ticker] = data.analysis;
+            }
+          } catch (err) {
+            console.warn(`Failed to load data for ${ticker}:`, err);
+          }
+        }
+        
+        if (Object.keys(stockData).length === 0) {
+          console.warn("No stock data available for any major stocks");
+          return;
+        }
+        
+        // Create comparison chart
+        const ctx = document.getElementById("priceChart").getContext("2d");
+        if (priceChart) priceChart.destroy();
+        
+        // Use the first stock's dates as labels
+        const firstStock = Object.keys(stockData)[0];
+        const labels = stockData[firstStock].slice().reverse().map(d => d.date);
+        
+        // Create datasets for each stock
+        const datasets = Object.entries(stockData).map(([ticker, data], index) => {
+          const colors = [
+            'rgb(75, 192, 192)',   // Teal
+            'rgb(255, 99, 132)',   // Red
+            'rgb(54, 162, 235)',   // Blue
+            'rgb(255, 205, 86)',   // Yellow
+            'rgb(153, 102, 255)'   // Purple
+          ];
+          
+          return {
+            label: ticker,
+            data: data.slice().reverse().map(d => parseFloat(d.close_price || 0)),
+            borderColor: colors[index % colors.length],
+            backgroundColor: colors[index % colors.length] + '20',
+            tension: 0.1,
+            fill: false
+          };
+        });
+        
+        priceChart = new Chart(ctx, {
+          type: "line",
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: { display: true, text: "Major Stocks Performance Comparison" },
+              legend: { display: true, position: 'top' }
+            },
+            scales: {
+              y: { 
+                beginAtZero: false, 
+                title: { display: true, text: "Price ($)" },
+                // Improve scaling for flat charts
+                ticks: {
+                  callback: function(value) {
+                    return '$' + value.toFixed(2);
+                  }
+                },
+                // Add padding to make flat charts more visible
+                afterDataLimits: function(scale) {
+                  const range = scale.max - scale.min;
+                  if (range < scale.max * 0.01) { // If range is less than 1% of max value
+                    const padding = scale.max * 0.02; // Add 2% padding
+                    scale.min = Math.max(0, scale.min - padding);
+                    scale.max = scale.max + padding;
+                  }
+                }
+              },
+              x: { title: { display: true, text: "Date" } }
+            }
+          }
+        });
+        
+        // hide skeleton and update badges
+        if (sk) sk.style.display = 'none';
+        const ds = document.getElementById('dataSourceBadge');
+        if (ds) ds.textContent = 'Multiple Stocks';
+        const lu = document.getElementById('lastUpdated');
+        if (lu) lu.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+        
+      } catch (err) {
+        console.error("Error loading multiple stocks", err);
+        const sk = document.getElementById('priceChartSkeleton'); if (sk) sk.style.display = 'none';
+      }
+    }
 
     // Updated indices function for FastAPI
     async function loadIndices(days = 30) {
@@ -536,7 +645,19 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              y: { display: true, title: { display: true, text: 'Index Value' } }
+              y: { 
+                display: true, 
+                title: { display: true, text: 'Index Value' },
+                // Improve scaling for flat index charts
+                afterDataLimits: function(scale) {
+                  const range = scale.max - scale.min;
+                  if (range < scale.max * 0.01) { // If range is less than 1% of max value
+                    const padding = scale.max * 0.02; // Add 2% padding
+                    scale.min = Math.max(0, scale.min - padding);
+                    scale.max = scale.max + padding;
+                  }
+                }
+              }
             },
             plugins: {
               legend: { display: true, position: 'top' }
@@ -565,16 +686,38 @@
     }
 
     // Updated sentiment trend function for FastAPI
-    async function loadSentimentTrend(ticker = "", days = 7, sentimentType = "") {
+    async function loadSentimentTrend(ticker = "", days = 7, sentimentType = "", keyword = "", source = "") {
       try {
-        const data = await fetchAPI("sentiment", { ticker, days });
+        console.log("Loading sentiment trend with params:", { ticker, days, sentimentType, keyword, source });
+        const data = await fetchAPI("sentiment", { ticker, days, live: true });
+        console.log("Sentiment API response:", data);
 
         const ctx = document.getElementById("sentimentTrendChart").getContext("2d");
         if (sentimentTrendChart) sentimentTrendChart.destroy();
 
         const trends = data.trends || [];
-        const labels = trends.map(t => t.date);
+        const labels = trends.map(t => t._id ? t._id.date : t.date);
         const sentiments = trends.map(t => t.avg_sentiment);
+
+        // Handle no data case - show empty chart
+        if (trends.length === 0) {
+          sentimentTrendChart = new Chart(ctx, {
+            type: "line",
+            data: { labels: [], datasets: [] },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false }
+              },
+              scales: {
+                y: { display: false },
+                x: { display: false }
+              }
+            }
+          });
+          return;
+        }
 
         sentimentTrendChart = new Chart(ctx, {
           type: "line",
@@ -596,7 +739,16 @@
               y: {
                 min: -1,
                 max: 1,
-                title: { display: true, text: 'Sentiment Score' }
+                title: { display: true, text: 'Sentiment Score' },
+                // Improve scaling for flat sentiment charts
+                afterDataLimits: function(scale) {
+                  const range = scale.max - scale.min;
+                  if (range < 0.1) { // If sentiment range is very small
+                    const padding = 0.05; // Add padding
+                    scale.min = Math.max(-1, scale.min - padding);
+                    scale.max = Math.min(1, scale.max + padding);
+                  }
+                }
               }
             },
             plugins: {
@@ -609,25 +761,34 @@
           }
         });
 
-        // Update statistics
+        // Update statistics - show if we have data
         const stats = data.statistics || {};
         const highlights = document.getElementById("topicHighlights");
-        highlights.innerHTML = `
-          <div class="row">
-            <div class="col-4 text-center">
-              <div class="text-success"><strong>${stats.positive_count || 0}</strong></div>
-              <div>Positive</div>
+        
+        if (stats.total_articles > 0) {
+          highlights.innerHTML = `
+            <div class="row">
+              <div class="col-4 text-center">
+                <div class="text-success"><strong>${stats.positive_count || 0}</strong></div>
+                <div>Positive</div>
+              </div>
+              <div class="col-4 text-center">
+                <div class="text-muted"><strong>${stats.neutral_count || 0}</strong></div>
+                <div>Neutral</div>
+              </div>
+              <div class="col-4 text-center">
+                <div class="text-danger"><strong>${stats.negative_count || 0}</strong></div>
+                <div>Negative</div>
+              </div>
             </div>
-            <div class="col-4 text-center">
-              <div class="text-muted"><strong>${stats.neutral_count || 0}</strong></div>
-              <div>Neutral</div>
+            <div class="text-center mt-2">
+              <small class="text-muted">Total: ${stats.total_articles} | Avg: ${(stats.avg_sentiment || 0).toFixed(3)}</small>
             </div>
-            <div class="col-4 text-center">
-              <div class="text-danger"><strong>${stats.negative_count || 0}</strong></div>
-              <div>Negative</div>
-            </div>
-          </div>
-        `;
+          `;
+        } else {
+          // Show empty statistics
+          highlights.innerHTML = `<div class="text-center text-muted">No data</div>`;
+        }
 
       } catch (err) {
         console.error("Error loading sentiment trend", err);
@@ -635,22 +796,35 @@
     }
 
     // Updated news feed function for FastAPI
-    async function loadNewsFeed(ticker = "", days = 7, sentimentType = "") {
+    async function loadNewsFeed(ticker = "", days = 7, sentimentType = "", keyword = "", source = "") {
       try {
+        console.log("Loading news feed with params:", { ticker, days, sentimentType, keyword, source });
         const data = await fetchAPI("news", {
           ticker,
           days,
           sentiment: sentimentType,
-          limit: 10
+          limit: 10,
+          live: true
         });
+        console.log("News API response:", data);
 
         const newsFeed = document.getElementById("newsFeed");
+        if (!newsFeed) {
+          console.error("News feed element not found!");
+          return;
+        }
         newsFeed.innerHTML = "";
 
         const articles = data.articles || [];
+        console.log("Articles count:", articles.length);
+
+        // Check if we have ticker-specific articles or just general articles
+        const message = data.message || "";
+        const hasTickerSpecificNews = ticker && !message.includes("general financial articles");
+        const shouldShowNoData = ticker && articles.length > 0 && !hasTickerSpecificNews;
 
         if (articles.length === 0) {
-          newsFeed.innerHTML = '<div class="list-group-item text-muted">No news articles found</div>';
+          newsFeed.innerHTML = '<div class="list-group-item text-muted">No articles</div>';
           return;
         }
 
@@ -723,7 +897,7 @@
         const timelineData = data.timeline || [];
 
         if (timelineData.length === 0) {
-          timeline.innerHTML = '<div class="text-muted">No timeline data available</div>';
+          timeline.innerHTML = '<div class="text-muted">No data</div>';
           return;
         }
 
@@ -761,7 +935,7 @@
         // Get both stock and sentiment data
         const [stockData, sentimentData] = await Promise.all([
           fetchAPI("stock_analysis", { ticker, days }),
-          fetchAPI("sentiment", { ticker, days })
+          fetchAPI("sentiment", { ticker, days, live: true })
         ]);
 
         const ctx = document.getElementById("priceSentimentOverlay").getContext("2d");
@@ -780,7 +954,7 @@
 
         // Match sentiment data to dates
         const sentiments = labels.map(date => {
-          const sentimentDay = sentimentTrends.find(s => s.date === date);
+          const sentimentDay = sentimentTrends.find(s => (s._id ? s._id.date : s.date) === date);
           return sentimentDay ? sentimentDay.avg_sentiment : null;
         });
 
@@ -813,7 +987,16 @@
                 type: 'linear',
                 display: true,
                 position: 'left',
-                title: { display: true, text: 'Price ($)' }
+                title: { display: true, text: 'Price ($)' },
+                // Improve scaling for flat price charts
+                afterDataLimits: function(scale) {
+                  const range = scale.max - scale.min;
+                  if (range < scale.max * 0.01) { // If range is less than 1% of max value
+                    const padding = scale.max * 0.02; // Add 2% padding
+                    scale.min = Math.max(0, scale.min - padding);
+                    scale.max = scale.max + padding;
+                  }
+                }
               },
               y1: {
                 type: 'linear',

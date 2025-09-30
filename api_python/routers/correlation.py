@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Query, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, text
-from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import Optional
 import logging
 from datetime import datetime, timedelta
 import statistics
 
-from config.database import get_mysql_session, get_mongo_collection
+from config.database import get_mysql_session
 from models.database_models import StockPrice
 from models.pydantic_models import CorrelationQuery, CorrelationResponse
 from utils.error_handlers import handle_database_error
@@ -21,7 +20,6 @@ async def get_correlation(
     date: Optional[str] = Query(None, description="Specific date for correlation analysis (YYYY-MM-DD)"),
     days_window: Optional[int] = Query(7, ge=3, le=30, description="Days window around the date for analysis"),
     db: AsyncSession = Depends(get_mysql_session),
-    collection: AsyncIOMotorCollection = Depends(get_mongo_collection)
 ):
     """
     Calculate real correlation between stock price movements and sentiment scores.
@@ -69,36 +67,8 @@ async def get_correlation(
                 "status": "no_data"
             }
 
-        # Get sentiment data for the same window
+        # Note: MongoDB sentiment data removed - using Firestore only
         sentiment_data = []
-        if collection:
-            try:
-                # Query MongoDB for sentiment data
-                sentiment_filter = {
-                    'ticker': ticker,
-                    'published_date': {
-                        '$gte': start_date,
-                        '$lte': end_date
-                    }
-                }
-
-                cursor = collection.find(
-                    sentiment_filter,
-                    {
-                        'published_date': 1,
-                        'sentiment_analysis.overall_score': 1
-                    }
-                ).sort('published_date', 1)
-
-                async for doc in cursor:
-                    if doc.get('sentiment_analysis', {}).get('overall_score') is not None:
-                        sentiment_data.append({
-                            'date': doc['published_date'].date(),
-                            'sentiment': doc['sentiment_analysis']['overall_score']
-                        })
-
-            except Exception as e:
-                logger.warning(f"Error fetching sentiment data: {e}")
 
         if not sentiment_data:
             return {

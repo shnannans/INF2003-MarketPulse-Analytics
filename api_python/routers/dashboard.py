@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import Optional
 import logging
 from datetime import datetime, timedelta
 
-from config.database import get_mysql_session, get_mongo_collection
+from config.database import get_mysql_session
 from models.database_models import Company, StockPrice
 from models.pydantic_models import DashboardSummaryResponse
 from utils.error_handlers import handle_database_error
@@ -18,7 +17,6 @@ logger = logging.getLogger(__name__)
 async def get_dashboard(
     days: Optional[int] = Query(7, ge=1, le=365, description="Number of days for analysis"),
     db: AsyncSession = Depends(get_mysql_session),
-    collection: AsyncIOMotorCollection = Depends(get_mongo_collection)
 ):
     """
     Get dashboard summary statistics.
@@ -53,34 +51,7 @@ async def get_dashboard(
         except Exception as e:
             logger.error(f"MySQL queries failed: {str(e)}")
 
-        # Get MongoDB statistics
-        try:
-            if collection is not None:
-                # Total articles
-                total_articles = await collection.count_documents({})
-
-                # Recent articles (last 24 hours)
-                recent_cutoff = datetime.now() - timedelta(days=1)
-                recent_articles = await collection.count_documents({
-                    'published_date': {'$gte': recent_cutoff}
-                })
-
-                # Average sentiment
-                sentiment_pipeline = [
-                    {
-                        '$group': {
-                            '_id': None,
-                            'avg_sentiment': {'$avg': '$sentiment_analysis.overall_score'}
-                        }
-                    }
-                ]
-
-                async for result in collection.aggregate(sentiment_pipeline):
-                    avg_sentiment = result.get('avg_sentiment', 0.0) or 0.0
-                    break
-
-        except Exception as e:
-            logger.error(f"MongoDB queries failed: {str(e)}")
+        # Note: MongoDB statistics removed - using Firestore only
 
         return {
             "total_companies": company_count,
@@ -109,7 +80,7 @@ async def get_sector_heatmap(
         # This is a simplified implementation. In production, you would:
         # 1. Query stock_prices table grouped by sector
         # 2. Calculate performance metrics per sector
-        # 3. Get sentiment data by sector from MongoDB
+        # 3. Get sentiment data by sector from Firestore
 
         # For now, returning realistic mock data that matches frontend expectations
         sectors_data = [

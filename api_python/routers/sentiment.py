@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, Query
-from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import Optional
 import logging
 from datetime import datetime, timedelta
 from collections import defaultdict, Counter
 import re
 
-from config.database import get_mongo_collection
+from config.firestore import get_sentiment_trends_from_firestore, get_sentiment_stats_from_firestore, store_sentiment_trend_in_firestore
 from models.pydantic_models import SentimentQuery, SentimentResponse
 from utils.error_handlers import handle_database_error
 from utils.news_service import get_financial_news
@@ -77,34 +76,64 @@ def extract_topics_from_articles(articles, max_topics=10):
 async def get_sentiment_rest_style(
     ticker: Optional[str] = Query("", description="Stock ticker to filter by"),
     days: Optional[int] = Query(7, ge=1, le=30, description="Number of days to analyze"),
-    live: Optional[bool] = Query(True, description="Use live NewsAPI (True) or fallback to MongoDB (False)"),
-    collection: AsyncIOMotorCollection = Depends(get_mongo_collection)
+    live: Optional[bool] = Query(True, description="Use live NewsAPI (True) or Firestore (False)")
 ):
     """
     Get sentiment analysis statistics and trends from live news data (REST-style endpoint).
-    Supports both live NewsAPI integration and MongoDB fallback.
+    Supports both live NewsAPI integration and Firestore fallback.
     """
-    return await get_sentiment_internal(ticker, days, live, collection)
+    return await get_sentiment_internal(ticker, days, live)
 
 async def get_sentiment_internal(
     ticker: Optional[str] = Query("", description="Stock ticker to filter by"),
     days: Optional[int] = Query(7, ge=1, le=30, description="Number of days to analyze"),
-    live: Optional[bool] = Query(True, description="Use live NewsAPI (True) or fallback to MongoDB (False)"),
-    collection: AsyncIOMotorCollection = Depends(get_mongo_collection)
+    live: Optional[bool] = Query(True, description="Use live NewsAPI (True) or Firestore (False)")
 ):
     """
     Get sentiment analysis statistics and trends from live news data.
-    Supports both live NewsAPI integration and MongoDB fallback.
+    Supports both live NewsAPI integration and Firestore fallback.
     """
     try:
         stats = {}
         trends = []
         topics = []
+        articles = []  # Initialize articles variable
 
-        if live:
-            # Use live NewsAPI service for sentiment analysis
-            logger.info(f"Fetching live sentiment data for ticker: {ticker}, days: {days}")
-            articles = await get_financial_news(ticker=ticker, days=days)
+        # Always try Firestore first (fallback mechanism)
+        logger.info(f"Fetching sentiment data from Firestore for ticker: {ticker}, days: {days}")
+        stats = await get_sentiment_stats_from_firestore(ticker=ticker, days=days)
+        trends = await get_sentiment_trends_from_firestore(ticker=ticker, days=days)
+        logger.info(f"Firestore returned stats: {stats}, trends: {len(trends)}")
+        
+        # Also fetch articles for topic extraction
+        if stats and stats.get('total_articles', 0) > 0:
+            logger.info("Fetching articles from Firestore for topic extraction")
+            from config.firestore import get_articles_from_firestore
+            articles = await get_articles_from_firestore(ticker=ticker, days=days, limit=50)
+            logger.info(f"Fetched {len(articles)} articles for topic extraction")
+            
+            # If no articles found for specific ticker, try general articles
+            if not articles and ticker and ticker.strip():
+                logger.info(f"No articles found for ticker '{ticker}', fetching general articles for topic extraction")
+                articles = await get_articles_from_firestore(ticker="", days=days, limit=50)
+                logger.info(f"Fetched {len(articles)} general articles for topic extraction")
+
+        # If no data from Firestore and live mode requested, try NewsAPI as fallback
+        if (not stats or not trends) and live:
+            try:
+                logger.info(f"Firestore empty, trying NewsAPI for ticker: {ticker}, days: {days}")
+                articles = await get_financial_news(ticker=ticker, days=days)
+            except Exception as e:
+                logger.warning(f"NewsAPI failed (possibly rate limited): {e}")
+                logger.info("Falling back to Firestore only")
+                # Try to get any available data from Firestore without ticker filter
+                if not stats:
+                    stats = await get_sentiment_stats_from_firestore(ticker="", days=days)
+                if not trends:
+                    trends = await get_sentiment_trends_from_firestore(ticker="", days=days)
+                if not articles:
+                    articles = await get_articles_from_firestore(ticker="", days=days, limit=50)
+                logger.info(f"Firestore fallback returned stats: {stats}, trends: {len(trends)}")
 
             if articles:
                 # Calculate statistics from live articles
@@ -160,125 +189,31 @@ async def get_sentiment_internal(
 
                 logger.info(f"Live sentiment analysis: {total_articles} articles, avg sentiment: {avg_sentiment:.3f}")
 
+                # Store sentiment trends in Firestore for future use
+                for date_str, scores in sorted(daily_data.items()):
+                    daily_avg = sum(scores) / len(scores) if scores else 0.0
+                    positive_count_daily = sum(1 for score in scores if score > 0.1)
+                    negative_count_daily = sum(1 for score in scores if score < -0.1)
+                    neutral_count_daily = len(scores) - positive_count_daily - negative_count_daily
+                    
+                    trend_data = {
+                        'ticker': ticker.upper() if ticker else '',
+                        'date': date_str,
+                        'avg_sentiment': round(daily_avg, 4),
+                        'article_count': len(scores),
+                        'positive_count': positive_count_daily,
+                        'negative_count': negative_count_daily,
+                        'neutral_count': neutral_count_daily
+                    }
+                    await store_sentiment_trend_in_firestore(trend_data)
+
         # Extract topics from live articles
         topics = []
         if articles:
             topics = extract_topics_from_articles(articles, max_topics=10)
             logger.info(f"Extracted {len(topics)} topics from {len(articles)} articles")
 
-        # Fallback to MongoDB if live fails or returns no results
-        if not stats and collection is not None:
-            logger.info("Falling back to MongoDB for sentiment analysis")
-
-            # Build match filter
-            cutoff_timestamp = datetime.now() - timedelta(days=days)
-            match_filter = {
-                'published_date': {'$gte': cutoff_timestamp}
-            }
-
-            if ticker:
-                match_filter['ticker'] = ticker.upper()
-
-            # Aggregate statistics
-            stats_pipeline = [
-                {'$match': match_filter},
-                {
-                    '$group': {
-                        '_id': None,
-                        'total_articles': {'$sum': 1},
-                        'avg_sentiment': {'$avg': '$sentiment_analysis.overall_score'},
-                        'positive_count': {
-                            '$sum': {
-                                '$cond': [
-                                    {'$gt': ['$sentiment_analysis.overall_score', 0.1]},
-                                    1,
-                                    0
-                                ]
-                            }
-                        },
-                        'negative_count': {
-                            '$sum': {
-                                '$cond': [
-                                    {'$lt': ['$sentiment_analysis.overall_score', -0.1]},
-                                    1,
-                                    0
-                                ]
-                            }
-                        },
-                        'neutral_count': {
-                            '$sum': {
-                                '$cond': [
-                                    {
-                                        '$and': [
-                                            {'$gte': ['$sentiment_analysis.overall_score', -0.1]},
-                                            {'$lte': ['$sentiment_analysis.overall_score', 0.1]}
-                                        ]
-                                    },
-                                    1,
-                                    0
-                                ]
-                            }
-                        }
-                    }
-                }
-            ]
-
-            stats_cursor = collection.aggregate(stats_pipeline)
-            stats_result = await stats_cursor.to_list(length=1)
-
-            # Default stats if no data
-            stats = stats_result[0] if stats_result else {
-                'total_articles': 0,
-                'avg_sentiment': 0.0,
-                'positive_count': 0,
-                'negative_count': 0,
-                'neutral_count': 0
-            }
-
-            # Remove MongoDB _id
-            stats.pop('_id', None)
-
-            # Daily trend analysis
-            trends_pipeline = [
-                {'$match': match_filter},
-                {
-                    '$group': {
-                        '_id': {
-                            'date': {
-                                '$dateToString': {
-                                    'format': "%Y-%m-%d",
-                                    'date': '$published_date'
-                                }
-                            }
-                        },
-                        'avg_sentiment': {'$avg': '$sentiment_analysis.overall_score'},
-                        'article_count': {'$sum': 1}
-                    }
-                },
-                {'$sort': {'_id.date': 1}}
-            ]
-
-            trends_cursor = collection.aggregate(trends_pipeline)
-            trends_raw = await trends_cursor.to_list(length=None)
-
-            # Format trends for consistency
-            trends = trends_raw
-
-            # Extract topics from MongoDB articles if we have some
-            if not topics and collection is not None:
-                try:
-                    # Get recent articles for topic extraction
-                    recent_articles = await collection.find(
-                        match_filter,
-                        {'title': 1, 'content': 1, '_id': 0}
-                    ).limit(50).to_list(length=50)
-
-                    if recent_articles:
-                        topics = extract_topics_from_articles(recent_articles, max_topics=10)
-                        logger.info(f"Extracted {len(topics)} topics from {len(recent_articles)} MongoDB articles")
-                except Exception as e:
-                    logger.error(f"Error extracting topics from MongoDB: {e}")
-                    topics = []
+        # Using Firestore only
 
         # Default stats if still empty
         if not stats:
@@ -289,6 +224,7 @@ async def get_sentiment_internal(
                 'negative_count': 0,
                 'neutral_count': 0
             }
+            logger.info("No sentiment data available from any source")
 
         return {
             "statistics": stats,
@@ -300,7 +236,7 @@ async def get_sentiment_internal(
                 "live_mode": live
             },
             "metadata": {
-                "data_source": "newsapi_live" if live and stats.get('total_articles', 0) > 0 else "mongodb_fallback" if stats.get('total_articles', 0) > 0 else "no_data",
+                "data_source": "firestore_fallback" if stats.get('total_articles', 0) > 0 and not live else "newsapi_live" if live and stats.get('total_articles', 0) > 0 else "firestore_only" if stats.get('total_articles', 0) > 0 else "no_data",
                 "analysis_method": "textblob_vader_combined" if live else "pre_calculated",
                 "topics_extracted": len(topics)
             },
@@ -309,7 +245,30 @@ async def get_sentiment_internal(
 
     except Exception as e:
         logger.error(f"Error fetching sentiment data: {str(e)}")
-        handle_database_error(e)
+        # Return empty data instead of raising an exception
+        return {
+            "statistics": {
+                'total_articles': 0,
+                'avg_sentiment': 0.0,
+                'positive_count': 0,
+                'negative_count': 0,
+                'neutral_count': 0
+            },
+            "trends": [],
+            "topics": [],
+            "filters": {
+                "ticker": ticker,
+                "days": days,
+                "live_mode": live
+            },
+            "metadata": {
+                "data_source": "error",
+                "analysis_method": "none",
+                "topics_extracted": 0
+            },
+            "status": "error",
+            "message": f"Error fetching sentiment data: {str(e)}"
+        }
 
 # Keep the old function name for backward compatibility
 get_sentiment = get_sentiment_internal

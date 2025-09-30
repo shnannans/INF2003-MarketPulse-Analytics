@@ -107,11 +107,11 @@ async function loadDashboard() {
   loadIndices(days);
 
   // Sentiment trends & news
-  loadSentimentTrend(ticker, days, sentimentType, keyword, source);
+  loadSentimentTrend(ticker, days, sentimentType, keyword, source); // Filter by ticker for specific data
 
   // Combined overlay of price vs sentiment
   loadPriceSentimentOverlay(ticker || "AAPL", days);
-  loadNewsFeed(ticker || "", days, sentimentType, keyword, source);
+  loadNewsFeed(ticker, days, sentimentType, keyword, source); // Filter by ticker for specific data
 
   // Sector heatmap + timeline (optional)
   loadSectorHeatmap(days);
@@ -244,7 +244,7 @@ async function loadIndices(days = 7) {
 // ---------- Sentiment Trend & Wordcloud (API: sentiment.py) ----------
 async function loadSentimentTrend(ticker="", days=7, sentiment="", keyword="", source="") {
   try {
-    const q = new URLSearchParams({ ticker, days, sentiment, keyword, source });
+    const q = new URLSearchParams({ ticker, days, sentiment, keyword, source, live: true });
     const resp = await fetch(`${window.API_BASE}sentiment?${q.toString()}`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
@@ -421,7 +421,7 @@ async function loadSentimentTrend(ticker="", days=7, sentiment="", keyword="", s
 // ---------- News Feed (API: news.py) ----------
 async function loadNewsFeed(ticker = "", days = 7, sentiment="", keyword="", source="") {
   try {
-    const q = new URLSearchParams({ ticker, days, sentiment, keyword, source, limit: 30 });
+    const q = new URLSearchParams({ ticker, days, sentiment, keyword, source, limit: 30, live: true });
     const resp = await fetch(`${window.API_BASE}news?${q.toString()}`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
@@ -631,7 +631,7 @@ async function loadPriceSentimentOverlay(ticker="AAPL", days=7) {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       }),
-      fetch(`${window.API_BASE}sentiment?ticker=${encodeURIComponent(ticker)}&days=${days}`).then(async r => {
+      fetch(`${window.API_BASE}sentiment?ticker=${encodeURIComponent(ticker)}&days=${days}&live=false`).then(async r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })

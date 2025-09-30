@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import logging
 from contextlib import asynccontextmanager
-from routers import companies, stock_analysis, news, sentiment, alerts, dashboard, indices, correlation, timeline
+from routers import companies, stock_analysis, news, sentiment, alerts, dashboard, indices, correlation, timeline, firestore_test
 
 # Import database config
 from config.database import init_database, close_database, test_all_connections
@@ -81,6 +81,7 @@ app.include_router(dashboard.router, prefix="/api", tags=["dashboard"])
 app.include_router(indices.router, prefix="/api", tags=["indices"])
 app.include_router(correlation.router, prefix="/api", tags=["correlation"])
 app.include_router(timeline.router, prefix="/api", tags=["timeline"])
+app.include_router(firestore_test.router, prefix="/api", tags=["firestore-test"])
 
 # Global exception handlers - FIXED VERSION
 @app.exception_handler(RequestValidationError)
