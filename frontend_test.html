@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .list-group-item { border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px; }
+        .sent-pos { color: #198754; }
+        .sent-neg { color: #dc3545; }
+        .sent-ntrl { color: #6c757d; }
+    </style>
+</head>
+<body>
+    <h1>Frontend Data Test</h1>
+    
+    <div>
+        <input id="tickerInput" placeholder="Enter ticker (e.g., BA, AGNC, MMM)" style="width: 200px; padding: 5px;">
+        <button onclick="testFrontend()" style="padding: 5px 10px;">Test Frontend</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <div class="test-section">
+        <h3>News Feed</h3>
+        <div id="newsFeed" class="list-group" style="max-height: 300px; overflow-y: auto;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Sentiment Chart</h3>
+        <canvas id="sentimentChart" width="400" height="200"></canvas>
+    </div>
+    
+    <div class="test-section">
+        <h3>Sentiment Statistics</h3>
+        <div id="sentimentStats"></div>
+    </div>
+    
+    <script>
+        // Replicate the exact same API configuration as index.html
+        window.API_BASE = "http://localhost:8000/api/";
+        
+        // Replicate the exact same fetchAPI function from index.html
+        async function fetchAPI(endpoint, params = {}, { timeout = 8000, retries = 2 } = {}) {
+            try {
+                const url = new URL(endpoint, window.API_BASE);
+                Object.keys(params).forEach(key => {
+                    if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                        url.searchParams.append(key, params[key]);
+                    }
+                });
+                let lastError = null;
+                for (let attempt = 0; attempt <= retries; attempt++) {
+                    try {
+                        const controller = new AbortController();
+                        const t = setTimeout(() => controller.abort(), timeout);
+                        const response = await fetch(url, { 
+                            method: 'GET', 
+                            headers: { 'Content-Type': 'application/json' }, 
+                            signal: controller.signal 
+                        });
+                        clearTimeout(t);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        const data = await response.json();
+                        if (data.status === 'error') throw new Error(data.error || 'API returned error status');
+                        return data;
+                    } catch (e) {
+                        lastError = e;
+                        if (attempt < retries) await new Promise(r => setTimeout(r, (attempt + 1) * 1000));
+                    }
+                }
+                throw lastError || new Error('Request failed');
+            } catch (error) {
+                console.error(`API call failed for ${endpoint}:`, error);
+                throw error;
+            }
+        }
+        
+        async function testFrontend() {
+            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+            const results = document.getElementById('results');
+            
+            if (!ticker) {
+                results.innerHTML = '<p style="color: red;">Please enter a ticker</p>';
+                return;
+            }
+            
+            results.innerHTML = `<p>Testing ${ticker}...</p>`;
+            
+            try {
+                // Test news feed
+                console.log('Testing news feed...');
+                await loadNewsFeed(ticker, 7, "", "", "");
+                
+                // Test sentiment
+                console.log('Testing sentiment...');
+                await loadSentimentTrend(ticker, 7, "", "", "");
+                
+                results.innerHTML = `<p style="color: green;">✅ Test completed for ${ticker}. Check the sections below.</p>`;
+                
+            } catch (error) {
+                console.error('Test error:', error);
+                results.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Replicate the exact same loadNewsFeed function from index.html
+        async function loadNewsFeed(ticker = "", days = 7, sentimentType = "", keyword = "", source = "") {
+            try {
+                console.log("Loading news feed with params:", { ticker, days, sentimentType, keyword, source });
+                const data = await fetchAPI("news", {
+                    ticker,
+                    days,
+                    sentiment: sentimentType,
+                    limit: 10,
+                    live: true
+                });
+                console.log("News API response:", data);
+
+                const newsFeed = document.getElementById("newsFeed");
+                if (!newsFeed) {
+                    console.error("News feed element not found!");
+                    return;
+                }
+                newsFeed.innerHTML = "";
+
+                const articles = data.articles || [];
+                console.log("Articles count:", articles.length);
+
+                if (articles.length === 0) {
+                    newsFeed.innerHTML = '<div class="list-group-item text-muted">No news articles found</div>';
+                    return;
+                }
+
+                articles.forEach(article => {
+                    const item = document.createElement("div");
+                    item.className = "list-group-item list-group-item-action";
+
+                    const sentiment = article.sentiment_analysis?.overall_score || 0;
+                    const sentimentClass = sentiment > 0.1 ? "sent-pos" : (sentiment < -0.1 ? "sent-neg" : "sent-ntrl");
+                    const sentimentText = sentiment > 0.1 ? "+" : (sentiment < -0.1 ? "-" : "○");
+
+                    item.innerHTML = `
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-1">${article.title || 'No title'}</h6>
+                            <small class="${sentimentClass}">${sentimentText}</small>
+                        </div>
+                        <p class="mb-1 small">${(article.content || '').substring(0, 120)}...</p>
+                        <small class="text-muted">${article.source || 'Unknown'} • ${article.published_date || 'Unknown date'}</small>
+                    `;
+                    newsFeed.appendChild(item);
+                });
+
+            } catch (error) {
+                console.error("Error loading news feed:", error);
+                const newsFeed = document.getElementById("newsFeed");
+                if (newsFeed) {
+                    newsFeed.innerHTML = '<div class="list-group-item text-muted">Error loading news</div>';
+                }
+            }
+        }
+        
+        // Replicate the exact same loadSentimentTrend function from index.html
+        async function loadSentimentTrend(ticker = "", days = 7, sentimentType = "", keyword = "", source = "") {
+            try {
+                console.log("Loading sentiment trend with params:", { ticker, days, sentimentType, keyword, source });
+                const data = await fetchAPI("sentiment", { ticker, days, live: true });
+                console.log("Sentiment API response:", data);
+
+                const ctx = document.getElementById("sentimentChart").getContext("2d");
+                const trends = data.trends || [];
+                const labels = trends.map(t => t._id ? t._id.date : t.date);
+                const sentiments = trends.map(t => t.avg_sentiment);
+
+                if (trends.length === 0) {
+                    ctx.fillText("No sentiment data available", 10, 50);
+                    return;
+                }
+
+                new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Sentiment Score",
+                            data: sentiments,
+                            borderColor: "rgb(75, 192, 192)",
+                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                min: -1,
+                                max: 1
+                            }
+                        }
+                    }
+                });
+
+                // Update statistics
+                const stats = data.statistics || {};
+                const statsDiv = document.getElementById("sentimentStats");
+                
+                if (stats.total_articles > 0) {
+                    statsDiv.innerHTML = `
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <div class="text-success"><strong>${stats.positive_count || 0}</strong></div>
+                                <div>Positive</div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="text-muted"><strong>${stats.neutral_count || 0}</strong></div>
+                                <div>Neutral</div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="text-danger"><strong>${stats.negative_count || 0}</strong></div>
+                                <div>Negative</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">Total: ${stats.total_articles} | Avg: ${(stats.avg_sentiment || 0).toFixed(3)}</small>
+                        </div>
+                    `;
+                } else {
+                    statsDiv.innerHTML = `<div class="text-center text-muted">No sentiment data available</div>`;
+                }
+
+            } catch (err) {
+                console.error("Error loading sentiment trend", err);
+            }
+        }
+    </script>
+</body>
+</html>
