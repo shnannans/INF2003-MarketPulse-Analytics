@@ -55,7 +55,7 @@ class FrontendIntegratedCollector:
         
         self.market_indices = {
             '^GSPC': 'S&P 500',
-            '^DJI': 'Dow Jones',
+            '^DJI': 'Dow Jones',    
             '^IXIC': 'NASDAQ'
         }
         
@@ -341,7 +341,7 @@ class FrontendIntegratedCollector:
                 ))
                 
                 # Get historical data (your existing logic)
-                hist = stock.history(period="1y")  
+                hist = stock.history(period="2y")  
                 if hist.empty:
                     logger.warning(f"No data for {ticker}")
                     continue

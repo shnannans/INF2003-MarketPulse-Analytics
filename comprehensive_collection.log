@@ -292,3 +292,115 @@
 2025-09-26 16:06:42,213 - INFO - 1. Start your web server (XAMPP/WAMP/MAMP)
 2025-09-26 16:06:42,213 - INFO - 2. Open http://localhost/your-project-folder/index.html
 2025-09-26 16:06:42,214 - INFO - 3. Enjoy your data-driven dashboard!
+2025-10-01 13:26:16,175 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-10-01 13:28:06,909 - INFO - Starting FRONTEND-INTEGRATED data collection...
+2025-10-01 13:28:08,030 - INFO - package: mysql.connector.plugins
+2025-10-01 13:28:08,031 - INFO - plugin_name: mysql_native_password
+2025-10-01 13:28:08,047 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-10-01 13:28:09,347 - INFO - MySQL database 'databaseproj' created/verified
+2025-10-01 13:28:11,436 - INFO - Connected to MySQL database: databaseproj
+2025-10-01 13:28:11,545 - INFO - Connected to MongoDB database: databaseproj
+2025-10-01 13:28:11,546 - INFO - Creating frontend-compatible database tables...
+2025-10-01 13:28:13,789 - INFO - Enhanced MySQL tables created successfully
+2025-10-01 13:28:13,789 - INFO - Collecting market indices...
+2025-10-01 13:28:14,012 - INFO - Collecting index data for S&P 500
+2025-10-01 13:28:48,521 - INFO - Collecting index data for Dow Jones
+2025-10-01 13:29:19,817 - INFO - Collecting index data for NASDAQ
+2025-10-01 13:29:51,046 - INFO - Market indices collection completed
+2025-10-01 13:29:51,047 - INFO - Collecting enhanced stock data...
+2025-10-01 13:29:51,561 - INFO - Collecting enhanced data for AAPL
+2025-10-01 13:32:04,679 - INFO - Collecting enhanced data for MSFT
+2025-10-01 13:34:18,984 - INFO - Collecting enhanced data for GOOGL
+2025-10-01 13:36:29,232 - INFO - Collecting enhanced data for AMZN
+2025-10-01 13:38:37,596 - INFO - Collecting enhanced data for TSLA
+2025-10-01 13:40:47,776 - INFO - Collecting enhanced data for META
+2025-10-01 13:42:59,348 - INFO - Collecting enhanced data for NVDA
+2025-10-01 13:45:09,212 - INFO - Collecting enhanced data for JPM
+2025-10-01 13:47:17,952 - INFO - Collecting enhanced data for V
+2025-10-01 13:49:24,282 - INFO - Collecting enhanced data for JNJ
+2025-10-01 13:51:29,815 - INFO - Collecting enhanced data for WMT
+2025-10-01 13:53:41,568 - INFO - Collecting enhanced data for PG
+2025-10-01 13:55:50,329 - INFO - Collecting enhanced data for UNH
+2025-10-01 13:57:54,573 - INFO - Collecting enhanced data for HD
+2025-10-01 13:59:58,583 - INFO - Collecting enhanced data for MA
+2025-10-01 14:02:06,589 - INFO - Collecting enhanced data for DIS
+2025-10-01 14:04:10,684 - INFO - Collecting enhanced data for PYPL
+2025-10-01 14:06:16,111 - INFO - Collecting enhanced data for BAC
+2025-10-01 14:08:17,788 - INFO - Collecting enhanced data for ADBE
+2025-10-01 14:10:21,706 - INFO - Collecting enhanced data for CRM
+2025-10-01 14:12:29,905 - INFO - Collecting enhanced data for NFLX
+2025-10-01 14:14:33,484 - INFO - Collecting enhanced data for NKE
+2025-10-01 14:16:40,055 - INFO - Collecting enhanced data for TMO
+2025-10-01 14:18:45,822 - INFO - Collecting enhanced data for ABT
+2025-10-01 14:20:52,168 - INFO - Collecting enhanced data for COST
+2025-10-01 14:22:54,792 - INFO - Collecting enhanced data for PFE
+2025-10-01 14:25:00,699 - INFO - Collecting enhanced data for AVGO
+2025-10-01 14:27:03,950 - INFO - Collecting enhanced data for XOM
+2025-10-01 14:29:07,083 - INFO - Collecting enhanced data for CVX
+2025-10-01 14:31:09,934 - INFO - Collecting enhanced data for KO
+2025-10-01 14:33:13,260 - INFO - Collecting enhanced data for PEP
+2025-10-01 14:35:18,233 - INFO - Collecting enhanced data for INTC
+2025-10-01 14:37:24,276 - INFO - Collecting enhanced data for CSCO
+2025-10-01 14:39:25,195 - INFO - Collecting enhanced data for VZ
+2025-10-01 14:41:30,144 - INFO - Collecting enhanced data for MRK
+2025-10-01 14:43:31,978 - INFO - Collecting enhanced data for T
+2025-10-01 14:45:36,327 - INFO - Collecting enhanced data for DHR
+2025-10-01 14:47:42,895 - INFO - Collecting enhanced data for TXN
+2025-10-01 14:49:52,882 - INFO - Collecting enhanced data for LLY
+2025-10-01 14:51:58,051 - INFO - Collecting enhanced data for ACN
+2025-10-01 14:54:02,172 - INFO - Collecting enhanced data for HON
+2025-10-01 14:56:05,951 - INFO - Collecting enhanced data for MDT
+2025-10-01 14:58:15,189 - INFO - Collecting enhanced data for UPS
+2025-10-01 15:00:18,303 - INFO - Collecting enhanced data for QCOM
+2025-10-01 15:02:26,640 - INFO - Collecting enhanced data for IBM
+2025-10-01 15:04:32,332 - INFO - Collecting enhanced data for BMY
+2025-10-01 15:06:36,491 - INFO - Collecting enhanced data for NEE
+2025-10-01 15:08:43,154 - INFO - Collecting enhanced data for SBUX
+2025-10-01 15:10:48,477 - INFO - Collecting enhanced data for AMT
+2025-10-01 15:12:58,219 - INFO - Collecting enhanced data for LOW
+2025-10-01 15:15:04,875 - INFO - Enhanced stock data collection completed
+2025-10-01 15:15:04,878 - INFO - Collecting sector performance...
+2025-10-01 15:15:05,110 - INFO - Collecting sector data for Technology
+2025-10-01 15:15:36,578 - INFO - Collecting sector data for Financials
+2025-10-01 15:16:08,027 - INFO - Collecting sector data for Energy
+2025-10-01 15:16:38,271 - INFO - Collecting sector data for Healthcare
+2025-10-01 15:17:10,535 - INFO - Collecting sector data for Industrials
+2025-10-01 15:17:43,609 - INFO - Collecting sector data for Consumer Staples
+2025-10-01 15:18:18,063 - INFO - Collecting sector data for Consumer Discretionary
+2025-10-01 15:18:52,842 - INFO - Collecting sector data for Utilities
+2025-10-01 15:19:23,721 - INFO - Collecting sector data for Materials
+2025-10-01 15:19:53,052 - INFO - Collecting sector data for Real Estate
+2025-10-01 15:20:23,878 - INFO - Collecting sector data for Communication Services
+2025-10-01 15:20:54,463 - INFO - Sector performance collection completed
+2025-10-01 15:20:54,463 - INFO - Generating comprehensive news...
+2025-10-01 15:20:54,465 - INFO - Generating comprehensive news dataset...
+2025-10-01 15:20:58,035 - INFO - Inserted 1000 comprehensive news articles
+2025-10-01 15:20:58,038 - INFO - Creating sample portfolio...
+2025-10-01 15:21:00,048 - INFO - Sample portfolio data generated
+2025-10-01 15:21:00,049 - INFO - Verifying frontend compatibility...
+2025-10-01 15:21:00,576 - INFO - Table companies: 50 records (Company dropdown and info)
+2025-10-01 15:21:00,825 - INFO - Table stock_prices: 25050 records (Price charts with technical indicators)
+2025-10-01 15:21:01,048 - INFO - Table financial_metrics: 50 records (KPI cards and company details (REQUIRED by get_companies.php))
+2025-10-01 15:21:01,267 - INFO - Table market_indices: 360 records (Market indices charts)
+2025-10-01 15:21:01,556 - INFO - Table sector_performance: 1320 records (Sector heatmaps)
+2025-10-01 15:21:01,789 - INFO - Table portfolio_holdings: 5 records (Portfolio widgets)
+2025-10-01 15:21:02,103 - INFO - SUCCESS: get_companies.php query test passed
+2025-10-01 15:21:02,103 - INFO -    NVDA: PE=NMS, Beta=https://www.nvidia.com, Records=2025-10-01 05:42:59
+2025-10-01 15:21:02,104 - INFO -    MSFT: PE=NMS, Beta=https://www.microsoft.com, Records=2025-10-01 05:32:05
+2025-10-01 15:21:02,104 - INFO -    AAPL: PE=NMS, Beta=https://www.apple.com, Records=2025-10-01 05:29:52
+2025-10-01 15:21:02,153 - INFO - MongoDB news articles: 3000 (for news feed)
+2025-10-01 15:21:02,154 - INFO - FRONTEND-INTEGRATED collection completed successfully!
+2025-10-01 15:21:02,155 - INFO - 
+2025-10-01 15:21:02,155 - INFO - Your PHP frontend should now display:
+2025-10-01 15:21:02,155 - INFO -    Company dropdown with all major stocks
+2025-10-01 15:21:02,156 - INFO -    Stock price charts with moving averages
+2025-10-01 15:21:02,156 - INFO -    Market indices charts (S&P 500, NASDAQ, Dow)
+2025-10-01 15:21:02,156 - INFO -    Financial metrics in KPI cards
+2025-10-01 15:21:02,156 - INFO -    News feed with sentiment analysis
+2025-10-01 15:21:02,156 - INFO -    Sector performance data
+2025-10-01 15:21:02,156 - INFO -    Portfolio widgets with sample data
+2025-10-01 15:21:02,156 - INFO - 
+2025-10-01 15:21:02,157 - INFO - Next steps:
+2025-10-01 15:21:02,157 - INFO - 1. Start your web server (XAMPP/WAMP/MAMP)
+2025-10-01 15:21:02,157 - INFO - 2. Open http://localhost/your-project-folder/index.html
+2025-10-01 15:21:02,157 - INFO - 3. Enjoy your data-driven dashboard!
