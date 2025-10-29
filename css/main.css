@@ -1,0 +1,24 @@
+body {
+    font-family: "Open Sans", sans-serif;
+  }
+  
+  h1 {
+    font-family: "Abril Fatface", cursive;
+  }
+  
+  .card {
+    border-radius: 12px;
+  }
+  
+  .table td, .table th {
+    vertical-align: middle;
+  }
+  
+  #sentimentChart, #priceChart {
+    max-width: 100%;
+  }
+  
+body { font-family: 'Open Sans', sans-serif; }
+.card { border-radius: 12px; }
+.list-group-item { cursor: pointer; }
+.small-badge { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; }
