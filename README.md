@@ -7,7 +7,8 @@ pip install -r requirements.txt
 
 ```bash
 cd api_python
-$env:API_PORT="8081" # or use 8082, or 8083 etc
+$env:API_PORT="8081" # or use 8082, or 8083 etc (for powershell)
+set API_PORT=8081 # for command prompt
 python run_server.py
 ```
 
