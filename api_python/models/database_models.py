@@ -5,12 +5,13 @@ from config.database import Base
 class Company(Base):
     __tablename__ = "companies"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    ticker = Column(String(10))
+    ticker = Column(String(10), primary_key=True)  # ticker is the primary key in actual DB
     company_name = Column(String(255))
     sector = Column(String(100))
     market_cap = Column(BigInteger)
     created_at = Column(DateTime)
+    deleted_at = Column(DateTime, nullable=True)  # Soft delete timestamp
+    version = Column(Integer, default=1, nullable=False)  # Optimistic locking (Task 35)
 
 class StockPrice(Base):
     __tablename__ = "stock_prices"
@@ -33,13 +34,12 @@ class StockPrice(Base):
 class FinancialMetrics(Base):
     __tablename__ = "financial_metrics"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    ticker = Column(String(10))
+    ticker = Column(String(10), primary_key=True)  # ticker is the primary key in actual DB
     pe_ratio = Column(DECIMAL(8, 2))
     dividend_yield = Column(DECIMAL(5, 4))
     market_cap = Column(BigInteger)
     beta = Column(DECIMAL(5, 3))
-    updated_at = Column(DateTime)
+    last_updated = Column(DateTime)  # Column name in actual DB is last_updated, not updated_at
 
 class MarketIndex(Base):
     __tablename__ = "market_indices"
@@ -70,3 +70,16 @@ class PortfolioHolding(Base):
     shares = Column(DECIMAL(15, 6))
     avg_cost = Column(DECIMAL(12, 4))
     current_price = Column(DECIMAL(12, 4))
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(50), unique=True, nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)  # Hashed password, never store plain text
+    role = Column(String(20), nullable=False, default="user")  # "user" or "admin"
+    is_active = Column(Integer, nullable=False, default=1)  # 1 for active, 0 for inactive
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime, nullable=True)  # Soft delete timestamp
