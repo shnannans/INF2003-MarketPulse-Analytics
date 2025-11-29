@@ -14,193 +14,402 @@
     <!-- Accessibility CSS -->
     <link rel="stylesheet" href="css/accessibility.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Navigation Bar */
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #111827;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .logo i {
+            font-size: 1.75rem;
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .nav-right span {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        
+        .btn-signup {
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+        
+        .btn-signup:hover {
+            background: #1f2937;
+            color: white;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2.5rem;
+            width: 100%;
+            max-width: 440px;
+        }
+        
+        .login-header {
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .form-control {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+        
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        .login-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 420px;
+        .password-toggle:hover {
+            color: #111827;
         }
         
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
+        .password-toggle i {
+            font-size: 1.1rem;
         }
         
-        .login-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 0.5rem;
+        /* Remember Me and Forgot Password Row */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
         
-        .login-header p {
-            color: #666;
-            font-size: 0.95rem;
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
+        .form-check-input {
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid #d1d5db;
+            cursor: pointer;
         }
         
-        .form-control {
-            border-radius: 8px;
-            border: 2px solid #e0e0e0;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
+        .form-check-input:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
         }
         
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+            margin: 0;
         }
         
+        .forgot-password-link a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+        
+        .forgot-password-link a:hover {
+            color: #111827;
+        }
+        
+        /* Sign In Button */
         .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111827;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 0.75rem;
-            font-weight: 600;
+            font-weight: 500;
             color: white;
             width: 100%;
-            transition: transform 0.2s ease;
+            font-size: 0.95rem;
+            transition: background 0.2s ease;
+            cursor: pointer;
         }
         
         .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #1f2937;
         }
         
         .btn-login:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
         
+        .btn-login:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+        }
+        
+        /* Alerts */
         .alert {
-            border-radius: 8px;
+            border-radius: 6px;
             border: none;
-        }
-        
-        .forgot-password-link {
-            text-align: right;
-            margin-top: 0.5rem;
-        }
-        
-        .forgot-password-link a {
-            color: #667eea;
-            text-decoration: none;
+            padding: 0.875rem 1rem;
+            margin-bottom: 1.25rem;
             font-size: 0.9rem;
         }
         
-        .forgot-password-link a:hover {
-            text-decoration: underline;
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #991b1b;
         }
         
-        .register-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e0e0e0;
+        .alert-success {
+            background-color: #f0fdf4;
+            color: #166534;
         }
         
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-        
+        /* Loading Spinner */
         .loading-spinner {
             display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
         }
         
         .loading-spinner.active {
             display: inline-block;
         }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 640px) {
+            .top-nav {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.25rem;
+            }
+            
+            .nav-right span {
+                display: none;
+            }
+            
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1><i class="bi bi-graph-up-arrow"></i> MarketPulse</h1>
-            <p>Sign in to your account</p>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="logo">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>MarketPulse</span>
+        </a>
+        <div class="nav-right">
+            <span>New to MarketPulse?</span>
+            <a href="register.html" class="btn-signup">Sign Up</a>
         </div>
-        
-        <div id="errorAlert" class="alert alert-danger" role="alert" style="display: none;"></div>
-        <div id="successAlert" class="alert alert-success" role="alert" style="display: none;"></div>
-        
-        <form id="loginForm">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input 
-                    type="email" 
-                    class="form-control" 
-                    id="email" 
-                    name="email" 
-                    required 
-                    autocomplete="email"
-                    placeholder="Enter your email"
-                >
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Welcome Back</h1>
             </div>
             
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input 
-                    type="password" 
-                    class="form-control" 
-                    id="password" 
-                    name="password" 
-                    required 
-                    autocomplete="current-password"
-                    placeholder="Enter your password"
-                >
-            </div>
+            <div id="errorAlert" class="alert alert-danger" role="alert" style="display: none;"></div>
+            <div id="successAlert" class="alert alert-success" role="alert" style="display: none;"></div>
             
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                <label class="form-check-label" for="rememberMe">
-                    Remember me
-                </label>
-            </div>
-            
-            <div class="forgot-password-link">
-                <a href="forgot-password.html">Forgot password?</a>
-            </div>
-            
-            <button type="submit" class="btn btn-login" id="loginButton">
-                <span class="loading-spinner me-2" role="status" aria-hidden="true"></span>
-                Sign In
-            </button>
-        </form>
-        
-        <div class="register-link">
-            Don't have an account? <a href="register.html">Sign up</a>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        class="form-control" 
+                        id="email" 
+                        name="email" 
+                        required 
+                        autocomplete="email"
+                        placeholder="yourname@email.com"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            autocomplete="current-password"
+                            placeholder="Enter your password"
+                        >
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
+                    
+                    <div class="forgot-password-link">
+                        <a href="forgot-password.html">Forgot password?</a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-login" id="loginButton">
+                    <div class="btn-content">
+                        <span class="loading-spinner" role="status" aria-hidden="true"></span>
+                        <span id="buttonText">Sign in</span>
+                    </div>
+                </button>
+            </form>
         </div>
     </div>
     
     <!-- Scripts -->
     <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            }
+        });
+        
         // Set API base URL
-        // Auto-detect API base from current URL (works for any port)
         if (!window.API_BASE) {
             const protocol = window.location.protocol;
             const hostname = window.location.hostname;
@@ -208,6 +417,7 @@
             window.API_BASE = `${protocol}//${hostname}:${port}/api`;
         }
     </script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     
@@ -225,4 +435,3 @@
     <script src="js/login.js"></script>
 </body>
 </html>
-

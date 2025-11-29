@@ -14,88 +14,247 @@
     <!-- Accessibility CSS -->
     <link rel="stylesheet" href="css/accessibility.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
             min-height: 100vh;
+            display: flex;
+        }
+        
+        /* Split Screen Layout */
+        .register-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        /* Left Panel - Marketing Content */
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 100%);
+            color: white;
+            padding: 4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .left-panel .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 4rem;
+        }
+        
+        .left-panel .logo i {
+            font-size: 2rem;
+        }
+        
+        .left-panel h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        
+        .left-panel h1 .highlight {
+            color: #60a5fa;
+            display: inline-block;
+        }
+        
+        .left-panel .description {
+            font-size: 1.125rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            margin-bottom: 3rem;
+            max-width: 500px;
+        }
+        
+        .left-panel .features {
+            margin-bottom: 3rem;
+        }
+        
+        .left-panel .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .left-panel .feature-item i {
+            font-size: 1.5rem;
+            color: #60a5fa;
+            margin-top: 0.25rem;
+        }
+        
+        .left-panel .feature-item .feature-text h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .left-panel .feature-item .feature-text p {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin: 0;
+        }
+        
+        .left-panel .trusted-by {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+        }
+        
+        .left-panel .trusted-by p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        
+        /* Right Panel - Registration Form */
+        .right-panel {
+            flex: 1;
+            background: white;
+            padding: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 0;
+            overflow-y: auto;
         }
         
-        .register-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 2.5rem;
+        .form-container {
             width: 100%;
             max-width: 480px;
         }
         
-        .register-header {
-            text-align: center;
-            margin-bottom: 2rem;
+        .form-header {
+            margin-bottom: 2.5rem;
         }
         
-        .register-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #333;
+        .form-header h2 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
             margin-bottom: 0.5rem;
         }
         
-        .register-header p {
-            color: #666;
+        .form-header p {
             font-size: 0.95rem;
+            color: #6b7280;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.25rem;
         }
         
         .form-label {
-            font-weight: 600;
-            color: #333;
+            display: block;
+            font-weight: 500;
+            color: #111827;
             margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .required {
+            color: #dc2626;
+        }
+        
+        .input-wrapper {
+            position: relative;
         }
         
         .form-control {
-            border-radius: 8px;
-            border: 2px solid #e0e0e0;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: white;
         }
         
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: #9ca3af;
         }
         
         .form-control.is-invalid {
-            border-color: #dc3545;
+            border-color: #dc2626;
         }
         
         .form-control.is-valid {
-            border-color: #198754;
+            border-color: #16a34a;
         }
         
         .invalid-feedback {
             display: block;
             font-size: 0.875rem;
-            color: #dc3545;
-            margin-top: 0.25rem;
+            color: #dc2626;
+            margin-top: 0.375rem;
         }
         
+        .form-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.375rem;
+            display: block;
+        }
+        
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .password-toggle:hover {
+            color: #111827;
+        }
+        
+        .password-toggle i {
+            font-size: 1.1rem;
+        }
+        
+        /* Password Strength Indicator */
         .password-strength {
             margin-top: 0.5rem;
+        }
+        
+        .password-strength-text {
             font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
         }
         
         .password-strength-bar {
             height: 4px;
-            background: #e0e0e0;
+            background: #e5e7eb;
             border-radius: 2px;
-            margin-top: 0.5rem;
             overflow: hidden;
         }
         
@@ -108,55 +267,123 @@
         
         .password-strength-fill.weak {
             width: 33%;
-            background: #dc3545;
+            background: #dc2626;
         }
         
         .password-strength-fill.medium {
             width: 66%;
-            background: #ffc107;
+            background: #f59e0b;
         }
         
         .password-strength-fill.strong {
             width: 100%;
-            background: #198754;
+            background: #16a34a;
         }
         
+        /* Checkbox Styles */
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-check-input {
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid #d1d5db;
+            cursor: pointer;
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+        
+        .form-check-input:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #374151;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .form-check-label a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        .form-check-label a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Submit Button */
         .btn-register {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111827;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 0.75rem;
-            font-weight: 600;
+            font-weight: 500;
             color: white;
             width: 100%;
-            transition: transform 0.2s ease;
+            font-size: 0.95rem;
+            transition: background 0.2s ease;
+            cursor: pointer;
         }
         
         .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #1f2937;
         }
         
         .btn-register:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
         
-        .alert {
-            border-radius: 8px;
-            border: none;
+        .btn-register:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
         }
         
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        .loading-spinner.active {
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Login Link */
         .login-link {
             text-align: center;
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            color: #6b7280;
         }
         
         .login-link a {
-            color: #667eea;
+            color: #111827;
             text-decoration: none;
             font-weight: 600;
         }
@@ -165,116 +392,263 @@
             text-decoration: underline;
         }
         
-        .loading-spinner {
-            display: none;
+        /* Alerts */
+        .alert {
+            border-radius: 6px;
+            border: none;
+            padding: 0.875rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.9rem;
         }
         
-        .loading-spinner.active {
-            display: inline-block;
+        .alert-danger {
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+        
+        .alert-success {
+            background-color: #f0fdf4;
+            color: #166534;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .register-wrapper {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                padding: 2rem 1.5rem;
+                min-height: auto;
+            }
+            
+            .left-panel .logo {
+                margin-bottom: 2rem;
+            }
+            
+            .left-panel h1 {
+                font-size: 2rem;
+            }
+            
+            .left-panel .description {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .left-panel .features {
+                display: none;
+            }
+            
+            .left-panel .trusted-by {
+                display: none;
+            }
+            
+            .right-panel {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-header h2 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-header">
-            <h1><i class="bi bi-person-plus"></i> Create Account</h1>
-            <p>Join MarketPulse Analytics</p>
-        </div>
-        
-        <div id="errorAlert" class="alert alert-danger" role="alert" style="display: none;"></div>
-        <div id="successAlert" class="alert alert-success" role="alert" style="display: none;"></div>
-        
-        <form id="registerForm">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="username" 
-                    name="username" 
-                    required 
-                    autocomplete="username"
-                    placeholder="Choose a username"
-                    minlength="3"
-                    maxlength="20"
-                    pattern="[a-zA-Z0-9_]+"
-                >
-                <div class="invalid-feedback"></div>
-                <small class="form-text text-muted">3-20 characters, letters, numbers, and underscores only</small>
+    <div class="register-wrapper">
+        <!-- Left Panel - Marketing Content -->
+        <div class="left-panel">
+            <div class="logo">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>MarketPulse</span>
             </div>
             
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input 
-                    type="email" 
-                    class="form-control" 
-                    id="email" 
-                    name="email" 
-                    required 
-                    autocomplete="email"
-                    placeholder="Enter your email"
-                >
-                <div class="invalid-feedback"></div>
-            </div>
-            
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input 
-                    type="password" 
-                    class="form-control" 
-                    id="password" 
-                    name="password" 
-                    required 
-                    autocomplete="new-password"
-                    placeholder="Create a password"
-                    minlength="8"
-                >
-                <div class="invalid-feedback"></div>
-                <div class="password-strength">
-                    <div id="passwordStrengthText" class="text-muted"></div>
-                    <div class="password-strength-bar">
-                        <div id="passwordStrengthFill" class="password-strength-fill"></div>
+            <div>
+                <h1>
+                    Financial news sentiment analysis <span class="highlight">simplified.</span>
+                </h1>
+                
+                <p class="description">
+                    Access real-time sentiment analysis, powerful price-sentiment correlations, and intuitive reports that bring clarity to your investment research and portfolio decisions.
+                </p>
+                
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="bi bi-graph-up"></i>
+                        <div class="feature-text">
+                            <h3>Real-Time Analytics</h3>
+                            <p>Track sentiment-driven insights with automated price-sentiment correlation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <i class="bi bi-newspaper"></i>
+                        <div class="feature-text">
+                            <h3>Multi-Source News</h3>
+                            <p>Aggregate news from Reuters, Bloomberg, MarketWatch, and more</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <i class="bi bi-lightning-charge"></i>
+                        <div class="feature-text">
+                            <h3>AI-Powered Sentiment</h3>
+                            <p>Advanced NLP using TextBlob + VADER with financial lexicons</p>
+                        </div>
                     </div>
                 </div>
+                
+                <div class="trusted-by">
+                    <p>Built for FP&A professionals and financial analysts</p>
+                </div>
             </div>
-            
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <input 
-                    type="password" 
-                    class="form-control" 
-                    id="confirmPassword" 
-                    name="confirmPassword" 
-                    required 
-                    autocomplete="new-password"
-                    placeholder="Confirm your password"
-                >
-                <div class="invalid-feedback"></div>
-            </div>
-            
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-                <label class="form-check-label" for="terms">
-                    I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
-                </label>
-                <div class="invalid-feedback">You must agree to the terms</div>
-            </div>
-            
-            <button type="submit" class="btn btn-register" id="registerButton">
-                <span class="loading-spinner me-2" role="status" aria-hidden="true"></span>
-                Create Account
-            </button>
-        </form>
+        </div>
         
-        <div class="login-link">
-            Already have an account? <a href="login.html">Sign in</a>
+        <!-- Right Panel - Registration Form -->
+        <div class="right-panel">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Sign up for your free MarketPulse account</h2>
+                    <p>Start analyzing financial sentiment today</p>
+                </div>
+                
+                <div id="errorAlert" class="alert alert-danger" role="alert" style="display: none;"></div>
+                <div id="successAlert" class="alert alert-success" role="alert" style="display: none;"></div>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username <span class="required"></span></label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            required 
+                            autocomplete="username"
+                            placeholder="Choose a username"
+                            minlength="3"
+                            maxlength="20"
+                            pattern="[a-zA-Z0-9_]+"
+                        >
+                        <div class="invalid-feedback"></div>
+                        <small class="form-text">3-20 characters, letters, numbers, and underscores only</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address <span class="required"></span></label>
+                        <input 
+                            type="email" 
+                            class="form-control" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            autocomplete="email"
+                            placeholder="yourname@email.com"
+                        >
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password <span class="required"></span></label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password" 
+                                required 
+                                autocomplete="new-password"
+                                placeholder="Create a password"
+                                minlength="8"
+                            >
+                            <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                        <div class="password-strength">
+                            <div id="passwordStrengthText" class="password-strength-text"></div>
+                            <div class="password-strength-bar">
+                                <div id="passwordStrengthFill" class="password-strength-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password <span class="required"></span></label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                required 
+                                autocomplete="new-password"
+                                placeholder="Confirm your password"
+                            >
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye-slash" id="toggleConfirmPasswordIcon"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">
+                            By proceeding, you agree to the <a href="#" target="_blank">Privacy Policy</a> and <a href="#" target="_blank">Terms & Conditions</a>
+                        </label>
+                        <div class="invalid-feedback">You must agree to the terms</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-register" id="registerButton">
+                        <div class="btn-content">
+                            <span class="loading-spinner" role="status" aria-hidden="true"></span>
+                            <span id="buttonText">Create Account</span>
+                        </div>
+                    </button>
+                </form>
+                
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Log in</a>
+                </div>
+            </div>
         </div>
     </div>
     
     <!-- Scripts -->
     <script>
+        // Password visibility toggles
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('togglePasswordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            }
+        });
+        
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const toggleIcon = document.getElementById('toggleConfirmPasswordIcon');
+            
+            if (confirmPasswordInput.type === 'password') {
+                confirmPasswordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            } else {
+                confirmPasswordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            }
+        });
+        
         // Set API base URL
-        // Auto-detect API base from current URL (works for any port)
         if (!window.API_BASE) {
             const protocol = window.location.protocol;
             const hostname = window.location.hostname;
@@ -282,6 +656,7 @@
             window.API_BASE = `${protocol}//${hostname}:${port}/api`;
         }
     </script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     
@@ -299,4 +674,3 @@
     <script src="js/register.js"></script>
 </body>
 </html>
-
