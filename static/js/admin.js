@@ -774,9 +774,9 @@ async function loadTableSizes() {
                                 <tr>
                                     <td><strong>${table.table_name}</strong></td>
                                     <td>${table.size_mb.toFixed(2)}</td>
-                                    <td>${table.rows ? table.rows.toLocaleString() : 'N/A'}</td>
-                                    <td>${table.data_size_mb ? table.data_size_mb.toFixed(2) : 'N/A'}</td>
-                                    <td>${table.index_size_mb ? table.index_size_mb.toFixed(2) : 'N/A'}</td>
+                                    <td>${table.table_rows ? table.table_rows.toLocaleString() : 'N/A'}</td>
+                                    <td>${table.data_mb ? table.data_mb.toFixed(2) : 'N/A'}</td>
+                                    <td>${table.index_mb ? table.index_mb.toFixed(2) : 'N/A'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>

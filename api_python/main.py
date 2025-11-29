@@ -8,6 +8,7 @@ import logging
 import os
 from pathlib import Path
 from contextlib import asynccontextmanager
+import asyncio
 from routers import companies, stock_analysis, news, sentiment, alerts, dashboard, indices, correlation, timeline, firestore_test, users, advanced_analytics, transaction_demo, pool_monitoring, cache_monitoring, data_warehouse, stored_procedures, performance, auth
 from middleware.security import SecurityHeadersMiddleware
 from middleware.rate_limiting import RateLimitMiddleware
@@ -34,20 +35,38 @@ async def lifespan(app: FastAPI):
     logger.info("Starting MarketPulse API...")
     await init_database()
     
-    # Run startup data synchronization
-    try:
-        # Access AsyncSessionLocal from the module after initialization
-        if db_config.AsyncSessionLocal:
-            async with db_config.AsyncSessionLocal() as session:
-                sync_summary = await sync_all_data(session)
-                logger.info(f"Startup sync completed: {sync_summary}")
-        else:
-            logger.warning("Database session not available, skipping startup sync")
-    except Exception as e:
-        logger.error(f"Startup synchronization failed: {e}")
-        logger.info("Continuing with API startup despite sync errors...")
+    # Run startup data synchronization in background (non-blocking)
+    async def run_startup_sync():
+        """Run startup sync in background without blocking server startup"""
+        try:
+            # Small delay to ensure server is ready
+            await asyncio.sleep(1)
+            
+            # Access AsyncSessionLocal from the module after initialization
+            if db_config.AsyncSessionLocal:
+                async with db_config.AsyncSessionLocal() as session:
+                    logger.info("Starting background data synchronization...")
+                    sync_summary = await sync_all_data(session)
+                    logger.info(f"Background startup sync completed: {sync_summary}")
+            else:
+                logger.warning("Database session not available, skipping startup sync")
+        except Exception as e:
+            logger.error(f"Background startup synchronization failed: {e}")
+            logger.info("Continuing despite sync errors...")
+    
+    # Start sync in background task (non-blocking)
+    sync_task = asyncio.create_task(run_startup_sync())
+    logger.info("Server ready - startup sync running in background")
     
     yield
+    
+    # Cancel sync task on shutdown if still running
+    if not sync_task.done():
+        sync_task.cancel()
+        try:
+            await sync_task
+        except asyncio.CancelledError:
+            logger.info("Startup sync task cancelled during shutdown")
     # Shutdown  
     logger.info("Shutting down MarketPulse API...")
     await close_database()
@@ -94,7 +113,7 @@ app = FastAPI(
     },
     servers=[
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8080",
             "description": "Development server"
         },
         {
@@ -197,9 +216,9 @@ if static_dir.exists():
     # html=True enables directory index and serves index.html for /
     app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="root")
     logger.info(f"Static files mounted from: {static_dir}")
-    logger.info(f"  - HTML files accessible at: http://localhost:8000/login.html")
-    logger.info(f"  - JS files accessible at: http://localhost:8000/js/")
-    logger.info(f"  - CSS files accessible at: http://localhost:8000/css/")
+    logger.info(f"  - HTML files accessible at: http://localhost:8080/login.html")
+    logger.info(f"  - JS files accessible at: http://localhost:8080/js/")
+    logger.info(f"  - CSS files accessible at: http://localhost:8080/css/")
 else:
     logger.warning(f"Static directory not found: {static_dir}")
 
@@ -290,4 +309,4 @@ async def general_exception_handler(request: Request, exc: Exception):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

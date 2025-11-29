@@ -29,8 +29,8 @@ def main():
     print("MarketPulse API Server")
     print("=" * 60)
     print("Starting FastAPI server...")
-    print("API Documentation: http://localhost:8000/docs")
-    print("Health Check: http://localhost:8000/health")
+    print("API Documentation: http://localhost:8080/docs")
+    print("Health Check: http://localhost:8080/health")
     print("Press Ctrl+C to stop the server")
     print("=" * 60)
 
@@ -38,8 +38,9 @@ def main():
         uvicorn.run(
             "main:app",
             host="0.0.0.0",
-            port=8000,
+            port=8080,
             reload=True,
+            reload_excludes=["*.log", "*.pyc", "__pycache__", "*.log.*", "logs/*"],
             log_level="info",
             access_log=True
         )

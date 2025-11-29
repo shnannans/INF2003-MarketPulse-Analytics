@@ -351,6 +351,17 @@ async def get_companies_rest_style(
     """
     return await get_companies_internal(sector, limit, live, db)
 
+@router.get("/companies/{ticker}", response_model=dict)
+async def get_company_by_ticker(
+    ticker: str,
+    live: Optional[bool] = Query(True, description="Use live data (True) or fallback to database (False)"),
+    db: AsyncSession = Depends(get_mysql_session)
+):
+    """
+    Get detailed information for a specific company by ticker (REST-style endpoint).
+    """
+    return await get_company_info(ticker, live, db)
+
 @router.get("/company/{ticker}", response_model=dict)
 async def get_company_info(
     ticker: str,

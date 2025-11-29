@@ -86,7 +86,7 @@ async function loadDashboard() {
 
   // Load KPIs
   try {
-    const response = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}dashboard?days=${days}`);
+    const response = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}dashboard?days=${days}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const summary = await response.json();
     console.log("Dashboard summary response:", summary); // Debug logging
@@ -125,7 +125,7 @@ async function loadStockPrices(ticker = "AAPL", days = 7, tickersFilter = "") {
     // Try optimized endpoint first (Priority 3: Optimized Query Endpoints)
     let json;
     try {
-      const optimizedResp = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}performance/stock-prices-optimized?ticker=${encodeURIComponent(ticker)}&limit=100`);
+      const optimizedResp = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}performance/stock-prices-optimized?ticker=${encodeURIComponent(ticker)}&limit=100`);
       if (optimizedResp.ok) {
         const optimizedJson = await optimizedResp.json();
         if (optimizedJson.status === 'success' && optimizedJson.data) {
@@ -153,7 +153,7 @@ async function loadStockPrices(ticker = "AAPL", days = 7, tickersFilter = "") {
     } catch (optimizedError) {
       // Fallback to regular endpoint
       console.log('Using regular stock_analysis endpoint (optimized endpoint unavailable)');
-      const resp = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}stock_analysis?ticker=${encodeURIComponent(ticker)}&days=${days}`);
+      const resp = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}stock_analysis?ticker=${encodeURIComponent(ticker)}&days=${days}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       json = await resp.json();
     }
@@ -230,7 +230,7 @@ async function loadStockPrices(ticker = "AAPL", days = 7, tickersFilter = "") {
 // ---------- Market Indices (API: indices.py) ----------
 async function loadIndices(days = 7) {
   try {
-    const resp = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}indices?days=${days}`);
+    const resp = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}indices?days=${days}`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
     console.log("Indices response:", json); // Debug logging
@@ -278,7 +278,7 @@ async function loadIndices(days = 7) {
 async function loadSentimentTrend(ticker="", days=7, sentiment="", keyword="", source="") {
   try {
     const q = new URLSearchParams({ ticker, days, sentiment, keyword, source, live: true });
-    const resp = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}sentiment?${q.toString()}`);
+    const resp = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}sentiment?${q.toString()}`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
     console.log("Sentiment API response:", json); // Debug logging
@@ -455,7 +455,7 @@ async function loadSentimentTrend(ticker="", days=7, sentiment="", keyword="", s
 async function loadNewsFeed(ticker = "", days = 7, sentiment="", keyword="", source="") {
   try {
     const q = new URLSearchParams({ ticker, days, sentiment, keyword, source, limit: 30, live: true });
-    const resp = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}news?${q.toString()}`);
+    const resp = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}news?${q.toString()}`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
     console.log("News API response:", json); // Debug logging
@@ -634,7 +634,7 @@ function openArticleModal(article) {
 
   // highlight related price area: call backend to get correlation and then maybe draw a highlight
   // For now, simply call correlation API to populate alerts
-  fetch(`${window.API_BASE || 'http://localhost:8000/api/'}correlation?ticker=${article.ticker}&date=${new Date(article.published_date).toISOString()}`)
+  fetch(`${window.API_BASE || 'http://localhost:8080/api/'}correlation?ticker=${article.ticker}&date=${new Date(article.published_date).toISOString()}`)
     .then(async r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
@@ -660,11 +660,11 @@ async function loadPriceSentimentOverlay(ticker="AAPL", days=7) {
   try {
     // get price (re-use stock analysis) and sentiment trend (re-use)
     const [priceResp, sentiResp] = await Promise.all([
-      fetch(`${window.API_BASE || 'http://localhost:8000/api/'}stock_analysis?ticker=${encodeURIComponent(ticker)}&days=${days}`).then(async r => {
+      fetch(`${window.API_BASE || 'http://localhost:8080/api/'}stock_analysis?ticker=${encodeURIComponent(ticker)}&days=${days}`).then(async r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       }),
-      fetch(`${window.API_BASE || 'http://localhost:8000/api/'}sentiment?ticker=${encodeURIComponent(ticker)}&days=${days}&live=false`).then(async r => {
+      fetch(`${window.API_BASE || 'http://localhost:8080/api/'}sentiment?ticker=${encodeURIComponent(ticker)}&days=${days}&live=false`).then(async r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
@@ -714,7 +714,7 @@ async function loadPriceSentimentOverlay(ticker="AAPL", days=7) {
 // ---------- Alerts ----------
 async function runAlerts() {
   try {
-    const resp = await fetch(`${window.API_BASE || 'http://localhost:8000/api/'}alerts?limit=10`);
+    const resp = await fetch(`${window.API_BASE || 'http://localhost:8080/api/'}alerts?limit=10`);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const json = await resp.json();
     const alerts = safeGetElement("alertsList", "run alerts");

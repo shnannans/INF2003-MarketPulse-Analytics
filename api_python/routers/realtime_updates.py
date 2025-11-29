@@ -9,7 +9,7 @@ from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
 import logging
 
-from config.database import get_read_session
+from config.database import get_mysql_session
 from models.database_models import StockPrice, Company
 
 router = APIRouter()
@@ -25,7 +25,7 @@ _connection_status = {
 
 @router.get("/realtime/status", response_model=dict)
 async def get_realtime_status(
-    db: AsyncSession = Depends(get_read_session)
+    db: AsyncSession = Depends(get_mysql_session)
 ):
     """
     Get real-time connection status (Task 65: Real-Time Updates).
@@ -63,7 +63,7 @@ async def get_realtime_status(
 @router.get("/realtime/last-updates", response_model=dict)
 async def get_last_updates(
     ticker: Optional[str] = Query(None, description="Stock ticker to filter by"),
-    db: AsyncSession = Depends(get_read_session)
+    db: AsyncSession = Depends(get_mysql_session)
 ):
     """
     Get last update timestamps for data (Task 65: Real-Time Updates).
@@ -111,7 +111,7 @@ async def get_last_updates(
 @router.get("/realtime/live-indicators", response_model=dict)
 async def get_live_indicators(
     ticker: Optional[str] = Query(None, description="Stock ticker to filter by"),
-    db: AsyncSession = Depends(get_read_session)
+    db: AsyncSession = Depends(get_mysql_session)
 ):
     """
     Get live data indicators (Task 65: Real-Time Updates).
@@ -185,7 +185,7 @@ async def get_live_indicators(
 @router.post("/realtime/refresh", response_model=dict)
 async def trigger_refresh(
     ticker: Optional[str] = Query(None, description="Stock ticker to refresh"),
-    db: AsyncSession = Depends(get_read_session)
+    db: AsyncSession = Depends(get_mysql_session)
 ):
     """
     Trigger a manual refresh of real-time data (Task 65: Real-Time Updates).
@@ -215,7 +215,7 @@ async def trigger_refresh(
 
 @router.get("/realtime/auto-refresh-config", response_model=dict)
 async def get_auto_refresh_config(
-    db: AsyncSession = Depends(get_read_session)
+    db: AsyncSession = Depends(get_mysql_session)
 ):
     """
     Get auto-refresh configuration (Task 65: Real-Time Updates).
@@ -224,7 +224,7 @@ async def get_auto_refresh_config(
     try:
         return {
             "status": "success",
-            "auto_refresh": {
+            "config": {
                 "enabled": True,
                 "interval_seconds": 60,
                 "max_updates_per_hour": 60,

@@ -27,6 +27,12 @@ function initRealTimeUpdates() {
 
 async function loadRealTimeConfig() {
     try {
+        // Check if we're accessing via file:// protocol
+        if (window.location.protocol === 'file:') {
+            console.warn('Accessing via file:// protocol. Please use http://localhost:8080 for full functionality.');
+            return;
+        }
+        
         const response = await window.api.get('realtime/auto-refresh-config');
         if (response.status === 'success' && response.config) {
             autoRefreshEnabled = response.config.enabled || false;
@@ -37,7 +43,12 @@ async function loadRealTimeConfig() {
             }
         }
     } catch (error) {
-        console.error('Error loading real-time config:', error);
+        // Silently fail if endpoint doesn't exist or server isn't running
+        if (error.message && error.message.includes('404')) {
+            console.debug('Real-time config endpoint not available');
+        } else {
+            console.error('Error loading real-time config:', error);
+        }
     }
 }
 
@@ -96,14 +107,24 @@ function hideLiveBadge() {
 }
 
 function setupConnectionStatus() {
+    // Check if we're accessing via file:// protocol
+    if (window.location.protocol === 'file:') {
+        console.warn('Accessing via file:// protocol. Connection status check disabled.');
+        return;
+    }
+    
     // Check connection status periodically
     setInterval(async () => {
         try {
             const response = await window.api.get('realtime/status');
             if (response.status === 'success') {
-                updateConnectionStatus(response.connected || false);
+                updateConnectionStatus(response.connection_status?.connected || false);
             }
         } catch (error) {
+            // Silently fail if endpoint doesn't exist
+            if (error.message && !error.message.includes('404')) {
+                console.debug('Connection status check failed:', error);
+            }
             updateConnectionStatus(false);
         }
     }, 30000); // Check every 30 seconds
@@ -124,9 +145,15 @@ function updateConnectionStatus(connected) {
 
 async function updateLastUpdateTimestamps() {
     try {
+        // Check if we're accessing via file:// protocol
+        if (window.location.protocol === 'file:') {
+            console.warn('Accessing via file:// protocol. Please use http://localhost:8080 for full functionality.');
+            return;
+        }
+        
         const response = await window.api.get('realtime/last-updates');
-        if (response.status === 'success' && response.updates) {
-            lastUpdateTimes = response.updates;
+        if (response.status === 'success' && response.last_updates) {
+            lastUpdateTimes = response.last_updates;
             
             // Update UI with last update times
             Object.keys(lastUpdateTimes).forEach(key => {
@@ -148,7 +175,12 @@ async function updateLastUpdateTimestamps() {
             });
         }
     } catch (error) {
-        console.error('Error updating last update timestamps:', error);
+        // Silently fail if endpoint doesn't exist or server isn't running
+        if (error.message && error.message.includes('404')) {
+            console.debug('Last updates endpoint not available');
+        } else {
+            console.error('Error updating last update timestamps:', error);
+        }
     }
 }
 

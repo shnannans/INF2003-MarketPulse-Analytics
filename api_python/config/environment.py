@@ -27,7 +27,7 @@ class EnvironmentConfig:
     
     # API
     API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
-    API_PORT: int = int(os.getenv("API_PORT", "8000"))
+    API_PORT: int = int(os.getenv("API_PORT", "8080"))
     API_RELOAD: bool = os.getenv("API_RELOAD", "False").lower() == "true"
     
     # Database

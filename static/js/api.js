@@ -3,7 +3,7 @@
  * Centralized API calls with error handling, retry logic, and token management
  */
 
-const API_BASE = window.API_BASE || 'http://localhost:8000/api';
+const API_BASE = window.API_BASE || 'http://localhost:8080/api';
 
 // Token management
 let authToken = localStorage.getItem('auth_token');
@@ -199,25 +199,34 @@ async function apiGet(endpoint, params = {}) {
 /**
  * POST request
  */
-async function apiPost(endpoint, data = {}) {
+async function apiPost(endpoint, data = {}, options = {}) {
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
     const isAuthEndpoint = normalizedEndpoint.includes('/auth/login') || 
                           normalizedEndpoint.includes('/auth/register');
     
+    // Build endpoint with query parameters if provided
+    let endpointWithParams = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    if (options && options.params && Object.keys(options.params).length > 0) {
+        const queryParams = new URLSearchParams(options.params).toString();
+        endpointWithParams += (endpointWithParams.includes('?') ? '&' : '?') + queryParams;
+        // Debug logging (can be removed in production)
+        console.debug('apiPost: Added query params', { endpoint, params: options.params, finalEndpoint: endpointWithParams });
+    }
+    
     // For auth endpoints, don't include Authorization header even if token exists
-    const options = {
+    const requestOptions = {
         method: 'POST',
         body: JSON.stringify(data),
     };
     
     // Remove Authorization header for login/register requests
     if (isAuthEndpoint) {
-        options.headers = {
+        requestOptions.headers = {
             'Content-Type': 'application/json',
         };
     }
     
-    return apiRequest(endpoint, options);
+    return apiRequest(endpointWithParams, requestOptions);
 }
 
 /**
