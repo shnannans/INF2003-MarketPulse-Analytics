@@ -7,6 +7,13 @@ from datetime import datetime, timedelta
 from google.cloud import firestore
 from google.cloud.firestore import Client
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env file if it exists (in case environment.py hasn't been imported yet)
+env_path = Path(__file__).parent.parent.parent / ".env"
+if env_path.exists():
+    load_dotenv(env_path, override=False)  # Don't override existing env vars
 
 logger = logging.getLogger(__name__)
 
@@ -25,22 +32,68 @@ def get_firestore_client() -> Optional[Client]:
         return _firestore_client
     
     try:
+        # Reload .env file to ensure latest values (in case it was just created)
+        if env_path.exists():
+            load_dotenv(env_path, override=False)
+        
         project_id = os.getenv("FIRESTORE_PROJECT_ID")
         credentials_path = os.getenv("FIRESTORE_CREDENTIALS_PATH")
         
+        # Debug logging to help diagnose
+        logger.debug(f"Firestore config check - Project ID: {project_id or 'NOT SET'}, Credentials Path: {credentials_path or 'NOT SET'}")
+        logger.debug(f"  .env file exists: {env_path.exists()}")
+        logger.debug(f"  .env file path: {env_path}")
+        logger.debug(f"  Current working directory: {os.getcwd()}")
+        
         if not project_id:
             logger.warning("FIRESTORE_PROJECT_ID not set, Firestore disabled")
+            logger.warning("  To enable: Set FIRESTORE_PROJECT_ID environment variable or create .env file")
+            logger.warning(f"  Expected .env file location: {env_path}")
+            if env_path.exists():
+                logger.warning("  .env file exists but FIRESTORE_PROJECT_ID is not set in it")
+                logger.warning("  Check .env file format: FIRESTORE_PROJECT_ID=inf1005-452110")
+            else:
+                logger.warning("  .env file not found at expected location")
             return None
         
-        if credentials_path and os.path.exists(credentials_path):
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        # Check credentials file if path is provided
+        if credentials_path:
+            if not os.path.exists(credentials_path):
+                logger.error(f"Firestore credentials file not found: {credentials_path}")
+                logger.error(f"  Current working directory: {os.getcwd()}")
+                logger.error(f"  Absolute path would be: {os.path.abspath(credentials_path)}")
+                logger.error("  Please check FIRESTORE_CREDENTIALS_PATH in .env file or environment variables")
+                return None
+            elif not os.access(credentials_path, os.R_OK):
+                logger.error(f"Firestore credentials file not readable: {credentials_path}")
+                logger.error("  Please check file permissions")
+                return None
+            else:
+                os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+                logger.debug(f"Using Firestore credentials from: {os.path.abspath(credentials_path)}")
         
         _firestore_client = firestore.Client(project=project_id)
         logger.info(f"Firestore client initialized for project: {project_id}")
         return _firestore_client
         
     except Exception as e:
-        logger.error(f"Error initializing Firestore client: {e}")
+        error_msg = str(e)
+        logger.error(f"Error initializing Firestore client: {error_msg}")
+        
+        # Provide more specific error guidance
+        if "403" in error_msg or "Permission denied" in error_msg:
+            logger.error("  → This is a permissions issue. Possible causes:")
+            logger.error("     1. Service account lacks 'Cloud Firestore User' role")
+            logger.error("     2. Firestore API not enabled for project")
+            logger.error("     3. Service account key is invalid or expired")
+        elif "404" in error_msg or "not found" in error_msg.lower():
+            logger.error("  → Project not found. Check FIRESTORE_PROJECT_ID matches Google Cloud project ID")
+        elif "401" in error_msg or "authentication" in error_msg.lower():
+            logger.error("  → Authentication failed. Check credentials file is valid JSON")
+        else:
+            logger.error(f"  → Error type: {type(e).__name__}")
+            logger.error("  → See FIRESTORE_TROUBLESHOOTING.md for detailed solutions")
+        
         return None
 
 

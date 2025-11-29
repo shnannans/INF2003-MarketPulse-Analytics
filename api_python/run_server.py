@@ -24,7 +24,7 @@ logging.basicConfig(
 
 def main():
     """Start the FastAPI server"""
-    
+
     # Get port from environment variable or default to 8080
     port = int(os.getenv('API_PORT', '8080'))
     
