@@ -3,7 +3,19 @@
  * Centralized API calls with error handling, retry logic, and token management
  */
 
-const API_BASE = window.API_BASE || 'http://localhost:8080/api';
+// Auto-detect API base URL from current browser location
+function getApiBase() {
+    if (window.API_BASE) {
+        return window.API_BASE;
+    }
+    // Auto-detect from current URL (works for any port)
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port || (protocol === 'https:' ? '443' : '80');
+    return `${protocol}//${hostname}:${port}/api`;
+}
+
+const API_BASE = getApiBase();
 
 // Token management
 let authToken = localStorage.getItem('auth_token');

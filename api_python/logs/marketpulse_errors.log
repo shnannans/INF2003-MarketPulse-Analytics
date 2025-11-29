@@ -57134,3 +57134,35 @@ message: "Permission denied on resource project INF1005."
   url: "https://console.developers.google.com"
 }
 ]
+2025-11-29 17:55:21 - sqlalchemy.pool.impl.QueuePool - ERROR - _finalize_fairy:1010 - Exception during reset or similar
+Traceback (most recent call last):
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\sqlalchemy\pool\base.py", line 988, in _finalize_fairy
+    fairy._reset(
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\sqlalchemy\pool\base.py", line 1438, in _reset
+    pool._dialect.do_rollback(self)
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\sqlalchemy\engine\default.py", line 692, in do_rollback
+    dbapi_connection.rollback()
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\sqlalchemy\dialects\mysql\aiomysql.py", line 200, in rollback
+    self.await_(self._connection.rollback())
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 125, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 185, in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\aiomysql\connection.py", line 399, in rollback
+    await self._read_ok_packet()
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\aiomysql\connection.py", line 372, in _read_ok_packet
+    pkt = await self._read_packet()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\aiomysql\connection.py", line 609, in _read_packet
+    packet_header = await self._read_bytes(4)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\corva\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\aiomysql\connection.py", line 657, in _read_bytes
+    data = await self._reader.readexactly(num_bytes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\asyncio\streams.py", line 750, in readexactly
+    await self._wait_for_data('readexactly')
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\asyncio\streams.py", line 543, in _wait_for_data
+    await self._waiter
+asyncio.exceptions.CancelledError

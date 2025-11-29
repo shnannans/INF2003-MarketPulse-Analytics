@@ -47,7 +47,7 @@ async function loadRealTimeConfig() {
         if (error.message && error.message.includes('404')) {
             console.debug('Real-time config endpoint not available');
         } else {
-            console.error('Error loading real-time config:', error);
+        console.error('Error loading real-time config:', error);
         }
     }
 }
@@ -179,7 +179,7 @@ async function updateLastUpdateTimestamps() {
         if (error.message && error.message.includes('404')) {
             console.debug('Last updates endpoint not available');
         } else {
-            console.error('Error updating last update timestamps:', error);
+        console.error('Error updating last update timestamps:', error);
         }
     }
 }

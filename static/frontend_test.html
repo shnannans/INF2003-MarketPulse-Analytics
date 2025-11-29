@@ -41,7 +41,13 @@
     
     <script>
         // Replicate the exact same API configuration as index.html
-        window.API_BASE = "http://localhost:8080/api/";
+        // Auto-detect API base from current URL (works for any port)
+        if (!window.API_BASE) {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            const port = window.location.port || (protocol === 'https:' ? '443' : '80');
+            window.API_BASE = `${protocol}//${hostname}:${port}/api/`;
+        }
         
         // Replicate the exact same fetchAPI function from index.html
         async function fetchAPI(endpoint, params = {}, { timeout = 8000, retries = 2 } = {}) {
