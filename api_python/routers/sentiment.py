@@ -104,6 +104,8 @@ async def get_sentiment_internal(
         stats = await get_sentiment_stats_from_firestore(ticker=ticker, days=days)
         trends = await get_sentiment_trends_from_firestore(ticker=ticker, days=days)
         logger.info(f"Firestore returned stats: {stats}, trends: {len(trends)}")
+        if trends:
+            logger.debug(f"Sample trend from Firestore: {trends[0] if trends else 'None'}")
         
         # Also fetch articles for topic extraction
         if stats and stats.get('total_articles', 0) > 0:
@@ -178,13 +180,21 @@ async def get_sentiment_internal(
                     'neutral_count': neutral_count
                 }
 
-                # Calculate daily trends
+                # Calculate daily trends - normalize format to match frontend expectations
+                # Frontend expects: {date: "...", avg_sentiment: ...} or {_id: {date: "..."}, avg_sentiment: ...}
                 for date_str, scores in sorted(daily_data.items()):
                     daily_avg = sum(scores) / len(scores) if scores else 0.0
+                    positive_count_daily = sum(1 for score in scores if score > 0.1)
+                    negative_count_daily = sum(1 for score in scores if score < -0.1)
+                    neutral_count_daily = len(scores) - positive_count_daily - negative_count_daily
+                    # Use consistent format: {date, avg_sentiment, ...} for compatibility
                     trends.append({
-                        '_id': {'date': date_str},
+                        'date': date_str,
                         'avg_sentiment': round(daily_avg, 4),
-                        'article_count': len(scores)
+                        'article_count': len(scores),
+                        'positive_count': positive_count_daily,
+                        'negative_count': negative_count_daily,
+                        'neutral_count': neutral_count_daily
                     })
 
                 logger.info(f"Live sentiment analysis: {total_articles} articles, avg sentiment: {avg_sentiment:.3f}")

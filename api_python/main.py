@@ -205,25 +205,6 @@ app.include_router(deployment.router, prefix="/api", tags=["deployment"])
 from routers import versioned
 app.include_router(versioned.router, prefix="/api", tags=["versioning"])
 
-# Mount static files (HTML, JS, CSS)
-# IMPORTANT: Mount static files AFTER all API routes to avoid conflicts
-static_dir = Path(__file__).parent.parent / "static"
-if static_dir.exists():
-    # Mount JS and CSS at their respective paths
-    app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
-    app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
-    # Mount HTML files at root (must be last to avoid route conflicts)
-    # html=True enables directory index and serves index.html for /
-    app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="root")
-    logger.info(f"Static files mounted from: {static_dir}")
-    logger.info(f"  - HTML files accessible at: http://localhost:8080/login.html")
-    logger.info(f"  - JS files accessible at: http://localhost:8080/js/")
-    logger.info(f"  - CSS files accessible at: http://localhost:8080/css/")
-else:
-    logger.warning(f"Static directory not found: {static_dir}")
-
-# Batch operations router removed
-
 # Import and register data export/import router
 from routers import data_export_import
 app.include_router(data_export_import.router, prefix="/api", tags=["data-export-import"])
@@ -259,6 +240,23 @@ app.include_router(advanced_charts.router, prefix="/api", tags=["advanced-charts
 # Import and register real-time updates router
 from routers import realtime_updates
 app.include_router(realtime_updates.router, prefix="/api", tags=["realtime-updates"])
+
+# Mount static files (HTML, JS, CSS)
+# IMPORTANT: Mount static files AFTER all API routes to avoid conflicts
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    # Mount JS and CSS at their respective paths
+    app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
+    app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
+    # Mount HTML files at root (must be last to avoid route conflicts)
+    # html=True enables directory index and serves index.html for /
+    app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="root")
+    logger.info(f"Static files mounted from: {static_dir}")
+    logger.info(f"  - HTML files accessible at: http://localhost:8080/login.html")
+    logger.info(f"  - JS files accessible at: http://localhost:8080/js/")
+    logger.info(f"  - CSS files accessible at: http://localhost:8080/css/")
+else:
+    logger.warning(f"Static directory not found: {static_dir}")
 
 # Mobile responsiveness router removed
 

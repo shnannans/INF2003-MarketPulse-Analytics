@@ -111,7 +111,7 @@ async function loadAdvancedAnalytics() {
 }
 
 async function loadMaterializedViews() {
-    const container = document.getElementById('materializedViewContainer');
+    const container = document.getElementById('materializedViewsContent') || document.getElementById('materializedViewContainer');
     try {
         // Load materialized view data
         const mvData = await window.api.get('warehouse/materialized-view/sector-performance');
@@ -184,38 +184,226 @@ function renderWindowFunctions(data) {
 }
 
 function renderSectorPerformance(data) {
-    // Render sector performance chart
+    // Render sector performance with all metrics
     const container = document.getElementById('sectorPerformanceContainer');
     if (!container) return;
     
-    if (data && data.length > 0) {
-        const ctx = document.createElement('canvas');
-        container.innerHTML = '';
-        container.appendChild(ctx);
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No sector performance data available</div>';
+        return;
+    }
+    
+    // Create a comprehensive table showing all metrics
+    let html = `
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Sector Performance Analysis</h5>
+                <small class="text-muted">Comprehensive metrics across all sectors</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Sector</th>
+                                <th class="text-end">Avg Price</th>
+                                <th class="text-end">Avg Volume</th>
+                                <th class="text-end">Price Volatility</th>
+                                <th class="text-end">Price Range</th>
+                                <th class="text-end">Volatility %</th>
+                                <th class="text-center">Companies</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    `;
+    
+    data.forEach(sector => {
+        const volatilityPct = sector.volatility_pct !== null && sector.volatility_pct !== undefined 
+            ? sector.volatility_pct 
+            : (sector.price_volatility && sector.avg_price && sector.avg_price > 0 
+                ? (sector.price_volatility / sector.avg_price * 100) 
+                : null);
         
-        if (typeof Chart !== 'undefined') {
+        const volatilityBadgeClass = volatilityPct !== null 
+            ? (volatilityPct > 20 ? 'bg-danger' : volatilityPct > 10 ? 'bg-warning' : 'bg-info')
+            : '';
+        
+        html += `
+            <tr>
+                <td><strong>${escapeHtml(sector.sector || 'Unknown')}</strong></td>
+                <td class="text-end">$${sector.avg_price ? sector.avg_price.toFixed(2) : 'N/A'}</td>
+                <td class="text-end">${sector.avg_volume ? Math.round(sector.avg_volume).toLocaleString() : 'N/A'}</td>
+                <td class="text-end">${sector.price_volatility !== null && sector.price_volatility !== undefined ? sector.price_volatility.toFixed(2) : 'N/A'}</td>
+                <td class="text-end">$${sector.price_range !== null && sector.price_range !== undefined ? sector.price_range.toFixed(2) : 'N/A'}</td>
+                <td class="text-end">
+                    ${volatilityPct !== null ? `
+                        <span class="badge ${volatilityBadgeClass}">${volatilityPct.toFixed(2)}%</span>
+                    ` : 'N/A'}
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-secondary">${sector.company_count || 0}</span>
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Summary Statistics -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Total Sectors</h6>
+                                <h3>${data.length}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Total Companies</h6>
+                                <h3>${data.reduce((sum, s) => sum + (s.company_count || 0), 0)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Avg Price (All)</h6>
+                                <h3>$${data.length > 0 ? (data.reduce((sum, s) => sum + (s.avg_price || 0), 0) / data.length).toFixed(2) : '0.00'}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Avg Volatility</h6>
+                                <h3>${data.filter(s => s.volatility_pct !== null).length > 0 
+                                    ? (data.reduce((sum, s) => sum + (s.volatility_pct || 0), 0) / data.filter(s => s.volatility_pct !== null).length).toFixed(2) 
+                                    : 'N/A'}%</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // Also create a chart for visual comparison (optional - can be toggled)
+    // Keep the chart creation but make it optional
+    const chartContainer = document.createElement('div');
+    chartContainer.className = 'mt-3';
+    chartContainer.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-graph-up"></i> Average Price by Sector</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="sectorPriceChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    `;
+    container.appendChild(chartContainer);
+    
+    if (typeof Chart !== 'undefined') {
+        const ctx = document.getElementById('sectorPriceChart');
+        if (ctx) {
+            // Destroy existing chart if it exists
+            if (analyticsCharts.sectorPerformance) {
+                analyticsCharts.sectorPerformance.destroy();
+            }
+            
             analyticsCharts.sectorPerformance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => d.sector),
+                    labels: data.map(d => d.sector || 'Unknown'),
                     datasets: [{
-                        label: 'Average Price',
-                        data: data.map(d => d.avg_price),
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                        label: 'Average Price ($)',
+                        data: data.map(d => d.avg_price || 0),
+                        backgroundColor: data.map((d, i) => {
+                            const colors = [
+                                'rgba(102, 126, 234, 0.8)',
+                                'rgba(40, 167, 69, 0.8)',
+                                'rgba(220, 53, 69, 0.8)',
+                                'rgba(255, 193, 7, 0.8)',
+                                'rgba(23, 162, 184, 0.8)',
+                                'rgba(108, 117, 125, 0.8)'
+                            ];
+                            return colors[i % colors.length];
+                        }),
+                        borderColor: data.map((d, i) => {
+                            const colors = [
+                                'rgba(102, 126, 234, 1)',
+                                'rgba(40, 167, 69, 1)',
+                                'rgba(220, 53, 69, 1)',
+                                'rgba(255, 193, 7, 1)',
+                                'rgba(23, 162, 184, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ];
+                            return colors[i % colors.length];
+                        }),
+                        borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: true,
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Sector Performance'
+                            text: 'Average Price by Sector',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Average Price ($)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toFixed(0);
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Sector'
+                            }
                         }
                     }
                 }
             });
         }
     }
+}
+
+// Helper function to escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Price trends render function removed per user request
@@ -265,7 +453,7 @@ function renderRollingAggregations(data) {
 
 function renderMaterializedView(data) {
     // Render materialized view data
-    const container = document.getElementById('materializedViewContainer');
+    const container = document.getElementById('materializedViewsContent') || document.getElementById('materializedViewContainer');
     if (!container) return;
     
     if (data && data.length > 0) {
@@ -360,7 +548,7 @@ window.refreshAnalytics = async function() {
 };
 
 window.refreshMaterializedView = async function() {
-    const container = document.getElementById('materializedViewContainer');
+    const container = document.getElementById('materializedViewsContent') || document.getElementById('materializedViewContainer');
     
     // Show loading overlay
     if (window.utils && window.utils.showLoadingOverlay) {

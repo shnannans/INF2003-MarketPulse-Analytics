@@ -168,8 +168,17 @@ def combine_sentiment_analysis(text: str) -> Dict:
     # Weighted average (VADER is generally better for social media/news)
     combined_score = (textblob_result["overall_score"] * 0.3) + (vader_result["overall_score"] * 0.7)
 
+    # Determine overall_sentiment category based on score thresholds
+    if combined_score > 0.1:
+        overall_sentiment = "positive"
+    elif combined_score < -0.1:
+        overall_sentiment = "negative"
+    else:
+        overall_sentiment = "neutral"
+
     return {
         "overall_score": round(combined_score, 4),
+        "overall_sentiment": overall_sentiment,  # Add this field for proper categorization
         "textblob_score": textblob_result["overall_score"],
         "vader_score": vader_result["overall_score"],
         "vader_breakdown": {
@@ -266,8 +275,11 @@ async def fetch_news_async(query: str, days: int = 7, language: str = 'en') -> L
                 sentiment_analysis = combine_sentiment_analysis(sentiment_text)
 
                 # Format article for our API - keep full content without truncation
+                # Generate article_id from URL hash (ensure positive number)
+                url = article.get('url', '')
+                url_hash = abs(hash(url)) if url else int(datetime.now().timestamp() * 1000000)
                 processed_article = {
-                    "article_id": f"newsapi_{hash(article.get('url', ''))}",
+                    "article_id": f"newsapi_{url_hash}",
                     "ticker": query.upper() if len(query) <= 5 else "",  # Assume ticker if short
                     "title": title,
                     "content": full_content,  # Remove arbitrary length limit

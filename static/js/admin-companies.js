@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function loadCompanies() {
     try {
-        const response = await window.api.get('/companies', { limit: 200 });
+        // Use live: false to get all companies from database, not just hardcoded popular tickers
+        const response = await window.api.get('/companies', { limit: 200, live: false });
         
         if (response.status === 'success' && response.companies) {
             allCompanies = response.companies;
@@ -53,7 +54,8 @@ async function loadDeletedCompanies() {
     const button = event.target;
     
     try {
-        const response = await window.api.get('/companies', { include_deleted: true, limit: 200 });
+        // Use live: false to get all companies from database
+        const response = await window.api.get('/companies', { limit: 200, live: false });
         
         if (response.status === 'success' && response.companies) {
             allCompanies = response.companies;

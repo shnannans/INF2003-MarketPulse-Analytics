@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 @router.get("/news", response_model=dict)
 async def get_news_rest_style(
     ticker: Optional[str] = Query("", description="Stock ticker to filter by"),
-    days: Optional[int] = Query(7, ge=1, le=30, description="Number of days to look back"),
+    days: Optional[int] = Query(7, ge=1, le=365, description="Number of days to look back (365 = all articles)"),
     sentiment: Optional[str] = Query("", regex="^(positive|negative|neutral|)$", description="Sentiment filter"),
     limit: Optional[int] = Query(20, ge=1, le=100, description="Maximum number of articles"),
     live: Optional[bool] = Query(True, description="Use live NewsAPI (True) or Firestore (False)")
@@ -29,7 +29,7 @@ async def get_news_rest_style(
 
 async def get_news_internal(
     ticker: Optional[str] = Query("", description="Stock ticker to filter by"),
-    days: Optional[int] = Query(7, ge=1, le=30, description="Number of days to look back"),
+    days: Optional[int] = Query(7, ge=1, le=365, description="Number of days to look back (365 = all articles)"),
     sentiment: Optional[str] = Query("", regex="^(positive|negative|neutral|)$", description="Sentiment filter"),
     limit: Optional[int] = Query(20, ge=1, le=100, description="Maximum number of articles"),
     live: Optional[bool] = Query(True, description="Use live NewsAPI (True) or Firestore (False)")
@@ -40,42 +40,101 @@ async def get_news_internal(
     """
     try:
         articles = []
+        firestore_articles = []
+        newsapi_articles = []
 
-        # Always try Firestore first (fallback mechanism)
-        logger.info(f"Fetching news from Firestore for ticker: {ticker}, days: {days}, sentiment: {sentiment}")
-        articles = await get_articles_from_firestore(ticker=ticker, days=days, sentiment_filter=sentiment, limit=limit)
-        logger.info(f"Firestore returned {len(articles)} articles for ticker '{ticker}'")
-        
-        # If no articles found for specific ticker, try general financial news
-        if not articles and ticker and ticker.strip():
-            logger.info(f"No articles found for ticker '{ticker}', trying general financial news")
-            articles = await get_articles_from_firestore(ticker="", days=days, sentiment_filter=sentiment, limit=limit)
-            logger.info(f"Firestore returned {len(articles)} general articles")
-
-        # If no articles from Firestore and live mode requested, try NewsAPI as fallback
-        if not articles and live:
+        # If live mode is requested, fetch from NewsAPI and store in Firestore
+        # Note: When live=False, we only fetch from Firestore (no NewsAPI)
+        if live:
             try:
                 # Use live NewsAPI service with real-time sentiment analysis
-                logger.info(f"Firestore empty, fetching live news for ticker: {ticker}, days: {days}, sentiment: {sentiment}")
-                articles = await get_financial_news(ticker=ticker, days=days, sentiment_filter=sentiment)
-
-                # Apply limit
-                if len(articles) > limit:
-                    articles = articles[:limit]
-
+                logger.info(f"Live mode enabled, fetching fresh news from NewsAPI for ticker: {ticker}, days: {days}, sentiment: {sentiment}")
+                newsapi_articles = await get_financial_news(ticker=ticker, days=days, sentiment_filter=sentiment)
+                
+                # Apply limit to NewsAPI results
+                if len(newsapi_articles) > limit:
+                    newsapi_articles = newsapi_articles[:limit]
+                
+                logger.info(f"NewsAPI returned {len(newsapi_articles)} fresh articles")
+                
                 # Store new articles in Firestore for future use
-                if articles:
-                    for article in articles:
-                        await store_article_in_firestore(article)
-
-                logger.info(f"Live news service returned {len(articles)} articles")
+                if newsapi_articles:
+                    logger.info(f"📦 Starting to store {len(newsapi_articles)} articles in Firestore...")
+                    stored_count = 0
+                    updated_count = 0
+                    failed_count = 0
+                    for article in newsapi_articles:
+                        try:
+                            success, is_new = await store_article_in_firestore(article)
+                            if success:
+                                if is_new:
+                                    stored_count += 1
+                                else:
+                                    updated_count += 1
+                            else:
+                                failed_count += 1
+                                logger.warning(f"Failed to store article in Firestore (returned False): {article.get('title', 'No title')[:50]}")
+                                logger.warning(f"  URL: {article.get('url', 'N/A')[:80]}")
+                        except Exception as store_error:
+                            failed_count += 1
+                            logger.error(f"Exception storing article in Firestore: {store_error}", exc_info=True)
+                            logger.error(f"  Article: {article.get('title', 'No title')[:50]}")
+                            logger.error(f"  URL: {article.get('url', 'N/A')[:80]}")
+                    
+                    if stored_count > 0:
+                        logger.info(f"✅ Successfully stored {stored_count} NEW articles in Firestore")
+                    if updated_count > 0:
+                        logger.info(f"🔄 Updated timestamps for {updated_count} existing articles in Firestore")
+                    if failed_count > 0:
+                        logger.warning(f"❌ Failed to store {failed_count} articles in Firestore (check logs for details)")
+                    if stored_count == 0 and updated_count == 0 and failed_count == 0:
+                        logger.warning("⚠️ No articles were processed for storage (all may have been duplicates or Firestore unavailable)")
+                
             except Exception as e:
                 logger.warning(f"NewsAPI failed (possibly rate limited): {e}")
                 logger.info("Falling back to Firestore only")
-                # Try to get any available articles from Firestore without ticker filter
-                if not articles:
-                    articles = await get_articles_from_firestore(ticker="", days=days, sentiment_filter=sentiment, limit=limit)
-                    logger.info(f"Firestore fallback returned {len(articles)} articles")
+        
+        # Fetch from Firestore (always, regardless of live mode)
+        logger.info(f"Fetching articles from Firestore for ticker: {ticker}, days: {days}, sentiment: {sentiment}")
+        firestore_articles = await get_articles_from_firestore(ticker=ticker, days=days, sentiment_filter=sentiment, limit=limit)
+        logger.info(f"Firestore returned {len(firestore_articles)} articles for ticker '{ticker}'")
+        
+        # If no articles found for specific ticker, try general financial news
+        if not firestore_articles and ticker and ticker.strip():
+            logger.info(f"No articles found for ticker '{ticker}', trying general financial news")
+            firestore_articles = await get_articles_from_firestore(ticker="", days=days, sentiment_filter=sentiment, limit=limit)
+            logger.info(f"Firestore returned {len(firestore_articles)} general articles")
+        
+        # If live mode is disabled, return only Firestore articles
+        if not live:
+            articles = firestore_articles
+            logger.info(f"Live mode disabled - returning {len(articles)} articles from Firestore only")
+        else:
+            # Merge NewsAPI and Firestore articles, prioritizing NewsAPI (fresh) articles
+            # Use article_id or URL as unique identifier to avoid duplicates
+            article_map = {}
+            
+            # First, add Firestore articles
+            for article in firestore_articles:
+                article_id = article.get("article_id") or article.get("url", "")
+                if article_id:
+                    article_map[article_id] = article
+            
+            # Then, add/overwrite with NewsAPI articles (these are fresher)
+            for article in newsapi_articles:
+                article_id = article.get("article_id") or article.get("url", "")
+                if article_id:
+                    article_map[article_id] = article
+            
+            # Convert map back to list and sort by published_date (newest first)
+            articles = list(article_map.values())
+            articles.sort(key=lambda x: x.get("published_date", ""), reverse=True)
+            
+            # Apply final limit
+            if len(articles) > limit:
+                articles = articles[:limit]
+            
+            logger.info(f"Final merged result: {len(articles)} unique articles (NewsAPI: {len(newsapi_articles)}, Firestore: {len(firestore_articles)})")
 
 
         # Determine the message based on what we have
@@ -152,6 +211,40 @@ async def get_news_internal(
 get_news = get_news_internal
 
 
+@router.get("/news/{article_id}", response_model=dict)
+async def get_news_article(article_id: str):
+    """
+    Get a single news article by ID from Firestore.
+    
+    Returns the full article document including all fields.
+    Returns 404 if article does not exist or is soft-deleted.
+    """
+    try:
+        article = await get_article_from_firestore(article_id)
+        
+        if not article:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Article with ID {article_id} not found"
+            )
+        
+        return {
+            "status": "success",
+            "article_id": article_id,
+            "article": article,
+            "message": "Article retrieved successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting article {article_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving article: {str(e)}"
+        )
+
+
 @router.post("/news/ingest", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def ingest_news(
     request: Dict[str, Any] = Body(...)
@@ -222,7 +315,7 @@ async def ingest_news(
                     article_data["sentiment_analysis"] = sentiment_result
                 
                 # Store article in Firestore
-                success = await store_article_in_firestore(article_data)
+                success, is_new = await store_article_in_firestore(article_data)
                 
                 if success:
                     results.append({

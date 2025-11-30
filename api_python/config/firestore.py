@@ -58,13 +58,37 @@ def get_firestore_client() -> Optional[Client]:
         
         # Check credentials file if path is provided
         if credentials_path:
-            if not os.path.exists(credentials_path):
-                logger.error(f"Firestore credentials file not found: {credentials_path}")
-                logger.error(f"  Current working directory: {os.getcwd()}")
-                logger.error(f"  Absolute path would be: {os.path.abspath(credentials_path)}")
-                logger.error("  Please check FIRESTORE_CREDENTIALS_PATH in .env file or environment variables")
-                return None
-            elif not os.access(credentials_path, os.R_OK):
+            # Resolve path relative to project root (where .env file is), not current working directory
+            # This handles cases where server runs from api_python/ but file is in project root
+            if not os.path.isabs(credentials_path):
+                # If relative path, try project root first, then current directory
+                project_root = env_path.parent
+                project_root_path = project_root / credentials_path
+                cwd_path = Path(credentials_path)
+                
+                if project_root_path.exists():
+                    credentials_path = str(project_root_path.absolute())
+                    logger.debug(f"Resolved credentials path to project root: {credentials_path}")
+                elif cwd_path.exists():
+                    credentials_path = str(cwd_path.absolute())
+                    logger.debug(f"Resolved credentials path to current directory: {credentials_path}")
+                else:
+                    # Try both locations in error message
+                    logger.error(f"Firestore credentials file not found: {credentials_path}")
+                    logger.error(f"  Searched in project root: {project_root_path.absolute()}")
+                    logger.error(f"  Searched in current directory: {cwd_path.absolute()}")
+                    logger.error(f"  Current working directory: {os.getcwd()}")
+                    logger.error("  Please check FIRESTORE_CREDENTIALS_PATH in .env file")
+                    logger.error("  File should be in project root or use absolute path")
+                    return None
+            else:
+                # Absolute path provided
+                if not os.path.exists(credentials_path):
+                    logger.error(f"Firestore credentials file not found: {credentials_path}")
+                    logger.error("  Please check FIRESTORE_CREDENTIALS_PATH in .env file")
+                    return None
+            
+            if not os.access(credentials_path, os.R_OK):
                 logger.error(f"Firestore credentials file not readable: {credentials_path}")
                 logger.error("  Please check file permissions")
                 return None
@@ -153,32 +177,128 @@ async def get_articles_from_firestore(
         collection_ref = client.collection("financial_news")
         query = collection_ref.where("deleted_at", "==", None)
         
+        logger.debug(f"Firestore query: collection=financial_news, deleted_at==None")
+        
         # Filter by ticker if provided
-        if ticker:
+        if ticker and ticker.strip():
             query = query.where("ticker", "==", ticker.upper())
+            logger.debug(f"Added ticker filter: {ticker.upper()}")
         
-        # Filter by date (last N days)
-        if days > 0:
-            cutoff_date = datetime.now() - timedelta(days=days)
-            query = query.where("published_date", ">=", cutoff_date.isoformat())
-        
-        # Filter by sentiment if provided
-        if sentiment_filter:
+        # Filter by sentiment if provided (do this before date filter to avoid index issues)
+        if sentiment_filter and sentiment_filter.strip():
             query = query.where("sentiment_analysis.overall_sentiment", "==", sentiment_filter.lower())
+            logger.debug(f"Added sentiment filter: {sentiment_filter.lower()}")
         
-        # Order by published date (newest first) and limit
-        query = query.order_by("published_date", direction=firestore.Query.DESCENDING).limit(limit)
+        # Firestore requires composite indexes for queries with multiple where clauses + order_by
+        # To avoid index requirements, we'll fetch documents and filter/sort in memory
+        # This works well for small to medium collections
+        
+        # Calculate cutoff date if needed (we'll filter in memory)
+        cutoff_date = None
+        if days > 0 and days < 365:
+            cutoff_date = datetime.now() - timedelta(days=days)
+            logger.debug(f"Will filter by date in memory: published_date >= {cutoff_date.isoformat()} (last {days} days)")
+        else:
+            logger.debug(f"Skipping date filter (days={days}, fetching all articles)")
+        
+        # Fetch more documents than needed to account for date filtering
+        # Fetch up to 10x the limit or 1000, whichever is smaller
+        fetch_limit = min(limit * 10, 1000)
+        query = query.limit(fetch_limit)
         
         articles = []
-        for doc in query.stream():
-            article_data = doc.to_dict()
-            article_data["article_id"] = doc.id
-            articles.append(article_data)
+        doc_count = 0
         
-        return articles
+        try:
+            for doc in query.stream():
+                doc_count += 1
+                article_data = doc.to_dict()
+                
+                # Filter by date in memory if needed
+                if cutoff_date:
+                    published_date_str = article_data.get("published_date", "")
+                    if published_date_str:
+                        try:
+                            # Parse the published_date
+                            if isinstance(published_date_str, str):
+                                # Handle ISO format strings (remove timezone for comparison)
+                                pub_date_str = published_date_str.replace('Z', '+00:00')
+                                pub_date = datetime.fromisoformat(pub_date_str)
+                                # Remove timezone for comparison
+                                pub_date = pub_date.replace(tzinfo=None)
+                                if pub_date < cutoff_date:
+                                    continue  # Skip articles older than cutoff
+                        except (ValueError, AttributeError) as e:
+                            logger.debug(f"Could not parse published_date '{published_date_str}': {e}")
+                            # If we can't parse the date, include the article (better to show than hide)
+                
+                article_data["article_id"] = doc.id
+                articles.append(article_data)
+            
+            # Sort by published_date in memory (newest first)
+            articles.sort(key=lambda x: x.get("published_date", ""), reverse=True)
+            
+            # Apply final limit
+            articles = articles[:limit]
+            
+            logger.info(f"Firestore query returned {len(articles)} articles (fetched {doc_count}, filtered/sorted in memory)")
+            return articles
+            
+        except Exception as query_error:
+            error_msg = str(query_error)
+            if "index" in error_msg.lower() or "FailedPrecondition" in error_msg:
+                logger.warning(f"Firestore index required for query. Using fallback approach.")
+                logger.warning(f"  To fix permanently, create the index at: https://console.firebase.google.com/project/inf1005-452110/firestore/indexes")
+                
+                # Fallback: Simple query without complex filters
+                try:
+                    simple_query = collection_ref.where("deleted_at", "==", None).limit(1000)
+                    if ticker and ticker.strip():
+                        simple_query = simple_query.where("ticker", "==", ticker.upper())
+                    
+                    articles = []
+                    for doc in simple_query.stream():
+                        article_data = doc.to_dict()
+                        article_data["article_id"] = doc.id
+                        articles.append(article_data)
+                    
+                    # Filter by date in memory
+                    if cutoff_date:
+                        filtered = []
+                        for article in articles:
+                            pub_date_str = article.get("published_date", "")
+                            if pub_date_str:
+                                try:
+                                    if isinstance(pub_date_str, str):
+                                        pub_date = datetime.fromisoformat(pub_date_str.replace('Z', '+00:00'))
+                                        pub_date = pub_date.replace(tzinfo=None)
+                                        if pub_date >= cutoff_date:
+                                            filtered.append(article)
+                                except (ValueError, AttributeError):
+                                    filtered.append(article)
+                            else:
+                                filtered.append(article)
+                        articles = filtered
+                    
+                    # Filter by sentiment in memory
+                    if sentiment_filter and sentiment_filter.strip():
+                        articles = [a for a in articles if a.get("sentiment_analysis", {}).get("overall_sentiment", "").lower() == sentiment_filter.lower()]
+                    
+                    # Sort by published_date in memory
+                    articles.sort(key=lambda x: x.get("published_date", ""), reverse=True)
+                    articles = articles[:limit]
+                    
+                    logger.info(f"Fallback query returned {len(articles)} articles")
+                    return articles
+                except Exception as fallback_error:
+                    logger.error(f"Fallback query also failed: {fallback_error}")
+                    return []
+            else:
+                # Re-raise if it's not an index error
+                raise
         
     except Exception as e:
-        logger.error(f"Error getting articles from Firestore: {e}")
+        logger.error(f"Error getting articles from Firestore: {e}", exc_info=True)
         return []
 
 
@@ -213,42 +333,100 @@ async def get_article_from_firestore(article_id: str) -> Optional[Dict[str, Any]
         return None
 
 
-async def store_article_in_firestore(article_data: Dict[str, Any]) -> bool:
+async def store_article_in_firestore(article_data: Dict[str, Any]) -> tuple:
     """
     Store a new article in Firestore.
-    Returns True if successful, False otherwise.
+    Returns (success: bool, is_new: bool) where is_new indicates if it was a new article or existing.
     """
     try:
         client = get_firestore_client()
         if client is None:
-            logger.warning("Firestore client not available")
-            return False
+            logger.warning("Firestore client not available - cannot store article")
+            logger.warning(f"  Article title: {article_data.get('title', 'No title')[:50]}")
+            return (False, False)
         
-        # Remove article_id from data if present (it will be the document ID)
-        article_id = article_data.pop("article_id", None)
+        # Make a copy to avoid modifying the original dict
+        article_copy = article_data.copy()
+        
+        # Get article_id from copy (it will be the document ID)
+        article_id = article_copy.pop("article_id", None)
+        
+        # If no article_id, try to generate one from URL
+        if not article_id:
+            url = article_copy.get("url", "")
+            if url:
+                # Use hash of URL, but ensure it's positive and valid for Firestore
+                url_hash = abs(hash(url))
+                article_id = f"newsapi_{url_hash}"
+            else:
+                # Generate a unique ID based on title and published_date
+                title = article_copy.get("title", "")
+                pub_date = article_copy.get("published_date", "")
+                if title and pub_date:
+                    article_id = f"newsapi_{abs(hash(f'{title}_{pub_date}'))}"
+                else:
+                    # Last resort: use timestamp
+                    article_id = f"newsapi_{int(datetime.now().timestamp() * 1000000)}"
+        
+        # Ensure article_id is a valid Firestore document ID (no special chars, max 1500 chars)
+        # Firestore document IDs can contain letters, numbers, and these: -_~!@#$%^&*()
+        # But we'll keep it simple: alphanumeric, dash, underscore
+        import re
+        article_id = re.sub(r'[^a-zA-Z0-9_-]', '_', str(article_id))
+        if len(article_id) > 1500:
+            article_id = article_id[:1500]
         
         # Add timestamps
-        article_data["created_at"] = datetime.now().isoformat()
-        article_data["updated_at"] = datetime.now().isoformat()
-        article_data["deleted_at"] = None
+        article_copy["created_at"] = datetime.now().isoformat()
+        article_copy["updated_at"] = datetime.now().isoformat()
+        article_copy["deleted_at"] = None
         
         collection_ref = client.collection("financial_news")
         
-        if article_id:
-            # Use provided article_id as document ID
-            doc_ref = collection_ref.document(article_id)
-            doc_ref.set(article_data)
-        else:
-            # Generate new document ID
-            _, doc_ref = collection_ref.add(article_data)
-            article_id = doc_ref.id
+        # Check if article already exists (to avoid overwriting with same data)
+        doc_ref = collection_ref.document(article_id)
+        existing_doc = doc_ref.get()
         
-        logger.info(f"Stored article {article_id} in Firestore")
-        return True
+        if existing_doc.exists:
+            existing_data = existing_doc.to_dict()
+            # If article exists and is not deleted, update timestamp but don't overwrite content
+            if existing_data.get("deleted_at") is None:
+                # Update the updated_at timestamp to show it was recently accessed
+                doc_ref.update({"updated_at": datetime.now().isoformat()})
+                logger.debug(f"Article {article_id} already exists in Firestore, updated timestamp: {article_copy.get('title', 'No title')[:50]}")
+                return (True, False)  # Success, but not new
+        
+        # Store the article (new article)
+        try:
+            doc_ref.set(article_copy)
+            
+            # Verify the article was actually stored by reading it back
+            verify_doc = doc_ref.get()
+            if verify_doc.exists:
+                logger.info(f"✅ Stored NEW article {article_id} in Firestore (verified)")
+                logger.info(f"   Collection: financial_news")
+                logger.info(f"   Document ID: {article_id}")
+                logger.info(f"   Title: {article_copy.get('title', 'No title')[:60]}")
+                logger.info(f"   URL: {article_copy.get('url', 'N/A')[:80]}")
+                logger.info(f"   Published: {article_copy.get('published_date', 'N/A')}")
+                logger.info(f"   Ticker: {article_copy.get('ticker', 'N/A')}")
+                logger.info(f"   Created at: {article_copy.get('created_at', 'N/A')}")
+                return (True, True)  # Success and new
+            else:
+                logger.error(f"❌ Article {article_id} was not stored - document does not exist after set()")
+                logger.error(f"   Title: {article_copy.get('title', 'No title')[:60]}")
+                return (False, False)
+        except Exception as set_error:
+            logger.error(f"❌ Failed to set document in Firestore: {set_error}", exc_info=True)
+            logger.error(f"   Article ID: {article_id}")
+            logger.error(f"   Title: {article_copy.get('title', 'No title')[:60]}")
+            logger.error(f"   Collection: financial_news")
+            raise
         
     except Exception as e:
-        logger.error(f"Error storing article in Firestore: {e}")
-        return False
+        logger.error(f"Error storing article in Firestore: {e}", exc_info=True)
+        logger.error(f"  Article data: title={article_data.get('title', 'N/A')[:50]}, url={article_data.get('url', 'N/A')[:50]}")
+        return (False, False)
 
 
 async def update_article_in_firestore(article_id: str, article_data: Dict[str, Any]) -> bool:
@@ -374,12 +552,25 @@ async def get_sentiment_stats_from_firestore(
         negative_count = 0
         neutral_count = 0
         sentiment_scores = []
+        missing_sentiment_count = 0  # Track articles missing overall_sentiment field
         
         for article in articles:
             sentiment_analysis = article.get("sentiment_analysis", {})
-            overall_sentiment = sentiment_analysis.get("overall_sentiment", "neutral")
+            overall_sentiment = sentiment_analysis.get("overall_sentiment")
             overall_score = sentiment_analysis.get("overall_score", 0.0)
             
+            # If overall_sentiment is not set, calculate it from overall_score
+            # This handles articles stored before we added overall_sentiment field
+            if overall_sentiment is None:
+                missing_sentiment_count += 1
+                if overall_score > 0.1:
+                    overall_sentiment = "positive"
+                elif overall_score < -0.1:
+                    overall_sentiment = "negative"
+                else:
+                    overall_sentiment = "neutral"
+            
+            # Count by sentiment category
             if overall_sentiment == "positive":
                 positive_count += 1
             elif overall_sentiment == "negative":
@@ -389,10 +580,20 @@ async def get_sentiment_stats_from_firestore(
             
             sentiment_scores.append(overall_score)
         
+        # Log if we had to calculate sentiment from scores
+        if missing_sentiment_count > 0:
+            logger.debug(f"Calculated sentiment from score for {missing_sentiment_count} articles (missing overall_sentiment field)")
+        
         avg_sentiment = sum(sentiment_scores) / len(sentiment_scores) if sentiment_scores else 0.0
         
+        # Return in format expected by frontend: positive_count, negative_count, neutral_count, avg_sentiment
         return {
             "total_articles": len(articles),
+            "positive_count": positive_count,
+            "negative_count": negative_count,
+            "neutral_count": neutral_count,
+            "avg_sentiment": avg_sentiment,
+            # Also include old field names for backward compatibility
             "positive": positive_count,
             "negative": negative_count,
             "neutral": neutral_count,
@@ -463,8 +664,16 @@ async def get_sentiment_trends_from_firestore(
         trends = []
         for date_str, trend_data in trends_by_date.items():
             if trend_data["total"] > 0:
-                trend_data["average_sentiment"] = trend_data["average_sentiment"] / trend_data["total"]
-            trends.append(trend_data)
+                avg_sentiment = trend_data["average_sentiment"] / trend_data["total"]
+                # Return in format expected by frontend: {date, avg_sentiment, ...}
+                trends.append({
+                    "date": date_str,
+                    "avg_sentiment": round(avg_sentiment, 4),
+                    "article_count": trend_data["total"],
+                    "positive_count": trend_data["positive"],
+                    "negative_count": trend_data["negative"],
+                    "neutral_count": trend_data["neutral"]
+                })
         
         # Sort by date
         trends.sort(key=lambda x: x["date"])

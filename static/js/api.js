@@ -201,8 +201,19 @@ async function apiGet(endpoint, params = {}) {
     // Normalize endpoint first (remove leading slash)
     const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
     
-    // Build query string
-    const queryString = new URLSearchParams(params).toString();
+    // Build query string - convert boolean values to strings for URLSearchParams
+    const queryParams = {};
+    for (const [key, value] of Object.entries(params)) {
+        if (value === true) {
+            queryParams[key] = 'true';
+        } else if (value === false) {
+            queryParams[key] = 'false';
+        } else {
+            queryParams[key] = value;
+        }
+    }
+    
+    const queryString = new URLSearchParams(queryParams).toString();
     const url = queryString ? `${normalizedEndpoint}?${queryString}` : normalizedEndpoint;
     
     return apiRequest(url, { method: 'GET' });
