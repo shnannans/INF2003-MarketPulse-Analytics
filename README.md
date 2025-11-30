@@ -39,6 +39,8 @@ Or create a new user
 
 - Login Page: http://localhost:8080/login.html # change the port to match step 2
 
+Loading times might take a while and applying the filter for the specific stock ticker you want will also take some time, but after clicking apply again, it should show the information you want
+
 - Frontend (Static Files): http://localhost:8080/
 - API Documentation (Swagger): http://localhost:8080/docs
 - Alternative API Docs (ReDoc): http://localhost:8080/redoc

@@ -65093,3 +65093,199 @@ google.api_core.exceptions.FailedPrecondition: 400 The query requires an index. 
 2025-11-30 18:38:18 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for NVDA: 'Company' object has no attribute 'industry'
 2025-11-30 18:39:24 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for NVDA: 'Company' object has no attribute 'industry'
 2025-11-30 18:39:26 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for NVDA: 'Company' object has no attribute 'industry'
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:51:38 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:51:39 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for AAPL: 'Company' object has no attribute 'industry'
+2025-11-30 19:51:40 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for AAPL: 'Company' object has no attribute 'industry'
+2025-11-30 19:51:40 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:51:40 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:51:40 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:51:40 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:51:40 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:51:40 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:21 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:23 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:48 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:49 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for NVDA: 'Company' object has no attribute 'industry'
+2025-11-30 19:52:50 - utils.news_service - ERROR - get_company_info_from_db:341 - Database query failed for NVDA: 'Company' object has no attribute 'industry'
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:77 - Firestore credentials file not found: service_key.json
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:78 -   Searched in project root: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\service_key.json
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:79 -   Searched in current directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python\service_key.json
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:80 -   Current working directory: C:\Users\corva\Downloads\INF2003-MarketPulse-Analytics-1\api_python
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:81 -   Please check FIRESTORE_CREDENTIALS_PATH in .env file
+2025-11-30 19:52:50 - config.firestore - ERROR - get_firestore_client:82 -   File should be in project root or use absolute path
