@@ -1,6 +1,10 @@
 ## Prerequisites
 - Python 3.8 or higher required
 
+The are 2 service keys should be renamed service_key
+service_key-IN-api_python should be placed in \INF2003-MarketPulse-Analytics-1\api_python
+service_key-IN-ROOT should be placed in \INF2003-MarketPulse-Analytics-1
+
 ## Step 1: Download the requirements
 pip install -r requirements.txt
 
